@@ -1,7 +1,7 @@
 export interface User {
   id: number;
   userId: string;
-  jwt?: string;
+  token?: string;
   address?: Address;
 }
 

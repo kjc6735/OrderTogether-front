@@ -1,15 +1,16 @@
-import {useNavigation} from '@react-navigation/native';
 import {useMutation} from 'react-query';
-import {login} from '../api';
-import {User} from '../api/types';
+import {login, setToken} from '../api';
 import {useUserState} from '../contexts/UserContext';
 
 export const useLogin = () => {
   const [, setUser] = useUserState();
   return useMutation(login, {
-    onSuccess: (data: User) => {
+    onSuccess: data => {
       setUser(data);
+      setToken(data.token);
     },
-    onError: () => {},
+    onError: e => {
+      console.log(e);
+    },
   });
 };

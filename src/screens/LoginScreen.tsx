@@ -17,15 +17,12 @@ export default function LoginScreen() {
   const [id, setId] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const {mutate, isLoading} = useLogin();
-  const onPress = () => {
+  const onPress = async () => {
     if (!id || !password) {
       console.log('아이디를 모두 입력해주세요.');
       return;
     }
-    if (isLoading) {
-      return;
-    }
-    mutate({id, password});
+    await mutate({id, password});
   };
   return (
     <KeyboardAvoidingView
