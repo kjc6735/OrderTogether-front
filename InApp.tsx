@@ -11,7 +11,9 @@ const Tab = createBottomTabNavigator();
 
 function InApp() {
   const [user] = useUserState();
-  const isLoggedIn = !!user;
+  // const isLoggedIn = !!user;
+  const isLoggedIn = true;
+
   return isLoggedIn ? (
     <Tab.Navigator>
       <Tab.Screen name="Home" component={HomeScreen} />

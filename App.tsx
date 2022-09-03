@@ -11,6 +11,7 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
+    // <MyMap />
     <UserContextProvider>
       <QueryClientProvider client={queryClient}>
         <NavigationContainer>

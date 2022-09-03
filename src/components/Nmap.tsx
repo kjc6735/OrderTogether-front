@@ -1,16 +1,12 @@
-import React, {useEffect} from 'react';
-import {Text, View} from 'react-native';
 import NaverMapView, {
   Circle,
   Marker,
   Path,
-  Polygon,
   Polyline,
+  Polygon,
 } from 'react-native-nmap';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useUserState} from '../contexts/UserContext';
 
-function MyMap() {
+function Nmap() {
   const P0 = {latitude: 37.564362, longitude: 126.977011};
   const P1 = {latitude: 37.565051, longitude: 126.978567};
   const P2 = {latitude: 37.565383, longitude: 126.976292};
@@ -58,16 +54,4 @@ function MyMap() {
   );
 }
 
-function HomeScreen() {
-  const [user] = useUserState();
-  useEffect(() => {
-    console.log(user);
-  }, []);
-  return (
-    <View style={{flex: 1}}>
-      <MyMap />
-    </View>
-  );
-}
-
-export default HomeScreen;
+export default Nmap;
