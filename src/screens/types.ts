@@ -11,3 +11,8 @@ export type RootStackParamList = {
 
 export type RootStackNavigationProp =
   NativeStackNavigationProp<RootStackParamList>;
+
+export type ILocation = {
+  latitude: number;
+  longitude: number;
+};

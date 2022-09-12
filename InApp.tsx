@@ -4,6 +4,7 @@ import React, {useEffect} from 'react';
 import {Alert, Linking, Platform} from 'react-native';
 import {check, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import {useUserState} from './src/contexts/UserContext';
+import useGetMyLocationEffect from './src/effects/useLocationEffect';
 import HomeScreen from './src/screens/HomeScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
@@ -15,12 +16,13 @@ function InApp() {
   const [user] = useUserState();
   // const isLoggedIn = !!user;
   useEffect(() => {
-    const pltform = Platform.OS;
     if (Platform.OS === 'android') {
       check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
         .then(result => {
           console.log('check location', result);
           if (result === RESULTS.BLOCKED || result === RESULTS.DENIED) {
+            console.log('android app location always error');
+
             Alert.alert(
               '이 앱은 위치 권한 허용이 필요합니다.',
               '앱 설정 화면을 열어서 항상 허용으로 바꿔주세요.',
@@ -42,9 +44,8 @@ function InApp() {
     } else if (Platform.OS === 'ios') {
       check(PERMISSIONS.IOS.LOCATION_ALWAYS)
         .then(result => {
-          const isSuccess =
-            result !== RESULTS.BLOCKED && result !== RESULTS.DENIED;
-          if (!isSuccess) {
+          if (result === RESULTS.BLOCKED || result === RESULTS.DENIED) {
+            console.log('ios app location always error');
             Alert.alert(
               '이 앱은 백그라운드 위치 권한 허용이 필요합니다.',
               '앱 설정 화면을 열어서 항상 허용으로 바꿔주세요.',
@@ -62,7 +63,6 @@ function InApp() {
           }
         })
         .catch(() => {
-          console.log(Platform.OS);
           console.error;
         });
     }

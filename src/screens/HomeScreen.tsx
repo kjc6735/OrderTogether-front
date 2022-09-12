@@ -1,43 +1,40 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Text, View} from 'react-native';
-import NaverMapView, {
-  Circle,
-  Marker,
-  Path,
-  Polygon,
-  Polyline,
-} from 'react-native-nmap';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import PositionList from '../components/RegisterList';
-import {useUserState} from '../contexts/UserContext';
-import Geolocation from 'react-native-geolocation-service';
-
-type ILocation = {
-  latitude: number;
-  longitude: number;
-};
+import NaverMapView, {Marker} from 'react-native-nmap';
+import PositionList from '../components/PostList';
+import {useLocationState} from '../contexts/LocationContext';
+import useGetMyLocationEffect from '../effects/useLocationEffect';
 
 function MyMap() {
-  const P0 = {latitude: 37.564362, longitude: 126.977011};
-  const P1 = {latitude: 37.565051, longitude: 126.978567};
-  const P2 = {latitude: 37.565383, longitude: 126.976292};
-  const [location, setLocation] = useState<ILocation | null>(null);
+  const [location] = useLocationState();
+  useGetMyLocationEffect();
+  if (!location) {
+    return (
+      <View>
+        <Text>test</Text>
+      </View>
+    );
+  }
 
   return (
     <NaverMapView
       style={{width: '100%', height: '100%'}}
       showsMyLocationButton={true}
-      center={{...P0, zoom: 16}}
+      center={{
+        zoom: 15,
+        latitude: location.latitude,
+        longitude: location.longitude,
+      }}
       onTouch={e => console.warn('onTouch', JSON.stringify(e.nativeEvent))}
       onCameraChange={e => console.warn('onCameraChange', JSON.stringify(e))}
       onMapClick={e => console.warn('onMapClick', JSON.stringify(e))}>
       <Marker
-        coordinate={P0}
+        coordinate={{latitude: 37.3701906, longitude: 127.9291425}}
         onClick={() => console.warn('onClick! p0')}
-        anchor={{x: 15, y: 15}}
-        caption={{
-          text: 'test',
-        }}
+      />
+      <Marker
+        coordinate={{latitude: location.latitude, longitude: location.latitude}}
+        onClick={() => console.log(location)}
       />
     </NaverMapView>
   );

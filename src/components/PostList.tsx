@@ -1,4 +1,5 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import Geolocation from '@react-native-community/geolocation';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   FlatList,
   Pressable,
@@ -103,18 +104,9 @@ const data = [
 ];
 
 const PositionList = () => {
-  const [location, setLocation] = useState(null);
-  const onPress = useCallback(key => {
-    console.log(key);
+  const onPress = useCallback(id => {
+    console.log(id);
   }, []);
-  // const onPress = useCallback(
-  //   key => {
-  //     setLocation({
-
-  //     })
-  //   },
-  //   [key],
-  // );
   return (
     <View
       style={{

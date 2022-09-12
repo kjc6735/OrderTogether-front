@@ -16,7 +16,7 @@ export default function LoginScreen() {
   const navigation = useNavigation<RootStackNavigationProp>();
   const [id, setId] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const {mutate, isLoading} = useLogin();
+  const {mutate} = useLogin();
   const onPress = async () => {
     if (!id || !password) {
       console.log('아이디를 모두 입력해주세요.');
