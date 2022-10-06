@@ -67,7 +67,7 @@ function InApp() {
         });
     }
   }, []);
-  return true ? (
+  return user ? (
     <Tab.Navigator>
       <Tab.Screen
         name="Home"

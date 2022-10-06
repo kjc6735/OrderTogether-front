@@ -11,12 +11,51 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import Inform from '../components/Inform';
+import {useRegister} from '../hooks/useRegister';
 
 export default function RegisterScreen() {
   const [id, setId] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [showPostcodePage, setShowPostcodePage] = useState<boolean>(false);
-  const [addr, setAddr] = useState<any>();
+  const [displayName, setDisplayName] = useState<string>('');
+  const [addr, setAddr] = useState<{
+    zonecode: string;
+    address: string;
+    addressEn: string;
+    detail?: string | null;
+  } | null>();
+
+  const {mutate, isLoading, isSuccess} = useRegister();
+
+  const initialize = useCallback(() => {
+    setId('');
+    setId('');
+    setDisplayName('');
+    setAddr(null);
+    setPassword('');
+  }, []);
+  const onSubmit = useCallback(() => {
+    if (!id || !password || !addr) {
+      Inform({title: '알림', message: '모든 정보를 입력해주세요..'});
+    }
+    if (addr) {
+      mutate({
+        displayName,
+        userId: id,
+        password,
+        addressKo: addr.address,
+        zonecode: addr.zonecode,
+        detail: addr.detail ?? null,
+        addressEn: addr.addressEn,
+      });
+    }
+  }, [addr, id, password, displayName, mutate]);
+
+  useEffect(() => {
+    isSuccess ? initialize() : '';
+  }, [isSuccess, initialize]);
+
   useEffect(() => {
     console.log(addr);
   }, [addr]);
@@ -31,9 +70,9 @@ export default function RegisterScreen() {
           onSelected={data => {
             const {zonecode, address, addressEnglish} = data;
             setAddr({
-              zonecode,
+              zonecode: `${zonecode}`,
               address,
-              addressEnglish,
+              addressEn: addressEnglish,
             });
             setShowPostcodePage(!showPostcodePage);
           }}
@@ -50,6 +89,13 @@ export default function RegisterScreen() {
               autoCapitalize="none"
               value={id}
               onChangeText={setId}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="닉네임"
+              autoCapitalize="none"
+              value={displayName}
+              onChangeText={setDisplayName}
             />
             <TextInput
               style={styles.input}
@@ -96,7 +142,9 @@ export default function RegisterScreen() {
               style={({pressed}) => [
                 styles.submit,
                 Platform.OS === 'ios' && pressed && styles.submitPressed,
-              ]}>
+              ]}
+              disabled={isLoading}
+              onPress={onSubmit}>
               <Text>회원가입</Text>
             </Pressable>
           </View>

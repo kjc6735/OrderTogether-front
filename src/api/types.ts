@@ -3,6 +3,9 @@ export interface User {
   userId: string;
   token?: string;
   address?: Address;
+  displayName?: string;
+  latitude: number;
+  longitude: number;
 }
 
 export interface Address {

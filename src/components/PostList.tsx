@@ -8,10 +8,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-
-type PositionListProps = {
-  data: null | string;
-};
+import {useQuery} from 'react-query';
+import {getAllPosts} from '../api';
 
 const P0 = {latitude: 37.564362, longitude: 126.977011};
 const P1 = {latitude: 37.565051, longitude: 126.978567};
@@ -23,6 +21,10 @@ const data = [
     latitude: P0.latitude,
     longitude: P0.longitude,
     describe: '지담치킨 먹을사람 ~~',
+    user: {
+      displayName: '치킨조아',
+      profile: '치킨을 좋아하는 청년입니다.',
+    },
   },
   {
     id: 2,
@@ -30,6 +32,10 @@ const data = [
     latitude: P1.latitude,
     longitude: P1.longitude,
     describe: '지담치킨 먹을사람 ~~',
+    user: {
+      displayName: '치킨조아',
+      profile: '치킨을 좋아하는 청년입니다.',
+    },
   },
   {
     id: 3,
@@ -37,6 +43,10 @@ const data = [
     latitude: P2.latitude,
     longitude: P2.longitude,
     describe: '지담치킨 먹을사람 ~~',
+    user: {
+      displayName: '치킨조아',
+      profile: '치킨을 좋아하는 청년입니다.',
+    },
   },
   {
     id: 4,
@@ -44,6 +54,10 @@ const data = [
     latitude: P0.latitude,
     longitude: P0.longitude,
     describe: '지담치킨 먹을사람 ~~',
+    user: {
+      displayName: '치킨조아',
+      profile: '치킨을 좋아하는 청년입니다.',
+    },
   },
   {
     id: 5,
@@ -51,6 +65,10 @@ const data = [
     latitude: P1.latitude,
     longitude: P1.longitude,
     describe: '지담치킨 먹을사람 ~~',
+    user: {
+      displayName: '치킨조아',
+      profile: '치킨을 좋아하는 청년입니다.',
+    },
   },
   {
     id: 6,
@@ -58,6 +76,10 @@ const data = [
     latitude: P2.latitude,
     longitude: P2.longitude,
     describe: '지담치킨 먹을사람 ~~',
+    user: {
+      displayName: '치킨조아',
+      profile: '치킨을 좋아하는 청년입니다.',
+    },
   },
   {
     id: 7,
@@ -65,6 +87,10 @@ const data = [
     latitude: P0.latitude,
     longitude: P0.longitude,
     describe: '지담치킨 먹을사람 ~~',
+    user: {
+      displayName: '치킨조아',
+      profile: '치킨을 좋아하는 청년입니다.',
+    },
   },
   {
     id: 8,
@@ -72,6 +98,10 @@ const data = [
     latitude: P1.latitude,
     longitude: P1.longitude,
     describe: '지담치킨 먹을사람 ~~',
+    user: {
+      displayName: '치킨조아',
+      profile: '치킨을 좋아하는 청년입니다.',
+    },
   },
   {
     id: 9,
@@ -79,6 +109,10 @@ const data = [
     latitude: P2.latitude,
     longitude: P2.longitude,
     describe: '지담치킨 먹을사람 ~~',
+    user: {
+      displayName: '치킨조아',
+      profile: '치킨을 좋아하는 청년입니다.',
+    },
   },
   {
     id: 10,
@@ -86,6 +120,10 @@ const data = [
     latitude: P0.latitude,
     longitude: P0.longitude,
     describe: '지담치킨 먹을사람 ~~',
+    user: {
+      displayName: '치킨조아',
+      profile: '치킨을 좋아하는 청년입니다.',
+    },
   },
   {
     id: 11,
@@ -93,6 +131,10 @@ const data = [
     latitude: P1.latitude,
     longitude: P1.longitude,
     describe: '지담치킨 먹을사람 ~~',
+    user: {
+      displayName: '치킨조아',
+      profile: '치킨을 좋아하는 청년입니다.',
+    },
   },
   {
     id: 12,
@@ -100,12 +142,17 @@ const data = [
     latitude: P2.latitude,
     longitude: P2.longitude,
     describe: '지담치킨 먹을사람 ~~',
+    user: {
+      displayName: '치킨조아',
+      profile: '치킨을 좋아하는 청년입니다.',
+    },
   },
 ];
 
 const PositionList = () => {
-  const onPress = useCallback(id => {
-    console.log(id);
+  const {data: posts, isLoading: postsLoading} = useQuery('posts', getAllPosts);
+  const onPress = useCallback(item => {
+    console.log(item);
   }, []);
   return (
     <View
@@ -126,16 +173,16 @@ const PositionList = () => {
         }}>
         <FlatList
           style={{backgroundColor: '#fff'}}
-          data={data}
+          data={posts}
           renderItem={({item}) => (
             <View style={{backgroundColor: '#fff'}}>
               {/* <Text>{item.id}</Text> */}
               <Pressable
                 style={{padding: 16}}
                 key={item.id}
-                onPress={() => onPress(item.id)}>
+                onPress={() => onPress(item)}>
                 <Text style={{backgroundColor: '#fff', fontSize: 20}}>
-                  {item.describe}
+                  {item.title}
                 </Text>
               </Pressable>
             </View>
@@ -153,12 +200,5 @@ const PositionList = () => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  wrapper: {
-    position: 'absolute',
-    bottom: 0,
-  },
-});
 
 export default PositionList;
