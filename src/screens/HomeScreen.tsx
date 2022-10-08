@@ -1,10 +1,11 @@
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
-import {Text, View} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {FlatList, Text, View} from 'react-native';
 import NaverMapView, {Marker} from 'react-native-nmap';
 import {useQuery} from 'react-query';
 import {getAllPosts, getCategory, getPosts} from '../api';
+import {Post} from '../api/types';
 import CustomMarker from '../components/CustomMarker';
 import PositionList from '../components/PostList';
 import {useLocationState} from '../contexts/LocationContext';
@@ -14,11 +15,14 @@ import usePost from '../hooks/usePost';
 import {MainTabParamList} from './types';
 
 function MyMap() {
-  const {data: posts, isLoading: postsLoading} = useQuery('posts', getAllPosts);
-  const [select, setSelect] = useState();
-  const onPress = id => {
-    setSelect(id);
-  };
+  const {data: posts} = useQuery('posts', getAllPosts);
+  const [select, setSelect] = useState<number>(1);
+  const onPress = useCallback(
+    (id: number) => {
+      setSelect(id);
+    },
+    [setSelect],
+  );
   const [location] = useLocationState();
   const [user] = useUserState();
   const navigation = useNavigation<MainTabParamList>();
@@ -43,9 +47,7 @@ function MyMap() {
       </View>
     );
   }
-  if (posts) {
-    console.log(posts);
-  }
+
   return (
     <NaverMapView
       style={{width: '100%', height: '100%'}}
@@ -56,18 +58,36 @@ function MyMap() {
         longitude: location.longitude,
       }}>
       {posts
-        ? posts.map((post: any) => (
-          <CustomMarker
-              
+        ? posts.map((post: Post) => (
+            <Marker
+              zIndex={post.id === select ? 999 : undefined}
+              pinColor={post.id === select ? '#00f' : undefined}
               key={post.id}
-              pinColor={select === post.id ? '#F00' : ''}
               coordinate={{
                 latitude: post.latitude,
                 longitude: post.longitude,
               }}
+              onClick={() => onPress(post.id)}
             />
           ))
         : null}
+      {/* <FlatList
+        keyExtractor={item => item.id.toString()}
+        data={posts}
+        renderItem={(post: Post) => (
+          <Marker
+            zIndex={post.id === select ? 999 : undefined}
+            pinColor={post.id === select ? '#00f' : undefined}
+            key={post.id.toString()}
+            coordinate={{
+              latitude: post.latitude,
+              longitude: post.longitude,
+            }}
+            onClick={() => onPress(post.id)}
+          />
+        )}
+        windowSize={2}
+      /> */}
     </NaverMapView>
   );
 }
@@ -78,7 +98,6 @@ function HomeScreen() {
     getCategory,
   );
   const {data: posts, isLoading: postsLoading} = useQuery('posts', getAllPosts);
-  // const {data: posts, isLoading: postsLoading} = useQuery('posts', getPosts);
   const [location] = useLocationState();
   const [user] = useUserState();
 
