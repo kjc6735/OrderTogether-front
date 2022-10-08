@@ -8,8 +8,10 @@ import userStorage from '../storages/userStorage';
 export const useLogin = () => {
   const [, setUser] = useUserState();
   return useMutation(login, {
-    onSuccess: async (data: User) => {
-      setUser(data);
+    onSuccess: async data => {
+      delete data.message;
+      delete data.success;
+      setUser(data.user);
       setToken(data.token);
       // await storage.set(data);
       await userStorage().set(data);

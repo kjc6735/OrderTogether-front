@@ -9,7 +9,8 @@ const useLoginEffect = () => {
     async function func() {
       const user = await userStorage().get();
       if (user) {
-        setUser(user);
+        console.log('login effects: ', user);
+        setUser(user.user);
         setToken(user.token);
       }
     }

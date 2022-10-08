@@ -4,16 +4,18 @@ const key = 'user';
 
 const userStorage = () => {
   return {
-    set: async (user: User) => {
-      await EncryptedStorage.setItem(key, JSON.stringify(user));
+    set: async (data: {user: User; toekn: string}) => {
+      await EncryptedStorage.setItem(key, JSON.stringify(data));
       try {
       } catch (e) {
         console.log(e);
       }
     },
-    get: async (): Promise<User> => {
+    get: async (
+      find = null,
+    ): Promise<{user: User; token: string} | User | string | null> => {
       const user = await EncryptedStorage.getItem(key);
-      return user ? JSON.parse(user) : null;
+      return user ? (find ? JSON.parse(user)[find] : JSON.parse(user)) : null;
     },
     clear: async () => {
       await EncryptedStorage.removeItem(key);

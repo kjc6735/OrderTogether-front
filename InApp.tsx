@@ -5,20 +5,12 @@ import {Alert, Linking, Platform} from 'react-native';
 import {check, PERMISSIONS, RESULTS} from 'react-native-permissions';
 import {useUserState} from './src/contexts/UserContext';
 import useLoginEffect from './src/effects/useLoginEffect';
-import HomeScreen from './src/screens/HomeScreen';
-import LoginScreen from './src/screens/LoginScreen';
 import MainTab from './src/screens/MainTab';
-import RegisterScreen from './src/screens/RegisterScreen';
 import RootStack from './src/screens/RootStack';
-import {RootStackParamList} from './src/screens/types';
-const Stack = createNativeStackNavigator<RootStackParamList>();
-const Tab = createBottomTabNavigator();
 
 function InApp() {
   const [user] = useUserState();
-
   useLoginEffect();
-  // const isLoggedIn = !!user;
   useEffect(() => {
     if (Platform.OS === 'android') {
       check(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION)
