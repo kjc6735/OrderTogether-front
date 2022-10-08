@@ -12,7 +12,7 @@ const Inform = ({
 }: {
   title: string;
   message: string;
-  objArr?: null | AlertButton[];
+  objArr?: null | any;
 }) => {
   return Alert.alert(
     title,
