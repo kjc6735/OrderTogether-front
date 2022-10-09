@@ -3,7 +3,6 @@ import axios from 'axios';
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {FlatList, Text, View} from 'react-native';
 import NaverMapView, {Marker} from 'react-native-nmap';
-import {openSettings} from 'react-native-permissions';
 import {useQuery} from 'react-query';
 import {getAllPosts, getCategory, getPosts} from '../api';
 import {Post} from '../api/types';
