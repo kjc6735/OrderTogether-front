@@ -147,7 +147,7 @@ function HomeScreen() {
   useEffect(() => {
     console.log(select);
   });
-  const isLoading = categoryLoading && postsLoading;
+  const isLoading = categoryLoading || postsLoading || !nmapRef;
 
   if (isLoading) {
     return (

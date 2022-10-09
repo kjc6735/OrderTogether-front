@@ -4,7 +4,7 @@ import {Platform} from 'react-native';
 const client = axios.create({
   baseURL:
     Platform.OS === 'android'
-      ? 'http://172.20.10.2:3000'
+      ? 'http://172.30.9.131:3000'
       : 'http://localhost:3000',
   // baseURL: '10.0.2.2:3000',
 });
