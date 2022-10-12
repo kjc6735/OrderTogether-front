@@ -1,15 +1,17 @@
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {FlatList, Text, View} from 'react-native';
 import NaverMapView, {Marker} from 'react-native-nmap';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {useQuery} from 'react-query';
 import {getAllPosts, getCategory, getPosts} from '../api';
 import {Post} from '../api/types';
 import CustomMarker from '../components/CustomMarker';
 import PositionList from '../components/PostList';
+import SelectCategory from '../components/SelectCategory';
 import {useUserState} from '../contexts/UserContext';
-import usePost from '../hooks/usePost';
+import usePost from '../hooks/usePostTemp';
 import {MainTabParamList} from './types';
 
 function MyMap({
@@ -131,7 +133,7 @@ function HomeScreen() {
     [setSelect, posts],
   );
   const nmapRef = useRef<any>();
-
+  const [store, setStore] = useState();
   useEffect(() => {
     nmapRef.current = user
       ? new NaverMapView({
@@ -168,6 +170,9 @@ function HomeScreen() {
               latitude: user.latitude,
               longitude: user.longitude,
             }}>
+            <SafeAreaView style={{padding: 10}}>
+              <SelectCategory onChange={setStore} value={store} />
+            </SafeAreaView>
             <Marker
               pinColor="#f0f"
               key={999}
@@ -194,7 +199,6 @@ function HomeScreen() {
               : null}
           </NaverMapView>
         ) : null}
-
         <PositionList
           onPress={onPress}
           select={select}

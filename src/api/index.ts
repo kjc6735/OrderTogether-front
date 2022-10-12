@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {Platform} from 'react-native';
 
-const client = axios.create({
+export const client = axios.create({
   baseURL:
     Platform.OS === 'android'
       ? 'http://172.30.9.131:3000'
@@ -15,7 +15,6 @@ export const setToken = (token: string | null) => {
     client.defaults.headers.common.token = token;
   } else {
     delete client.defaults.headers.common.token;
-    console.log(client.defaults.headers.common.token);
   }
 };
 
@@ -79,8 +78,19 @@ export const getAllStore = async () => {
   return data;
 };
 
-export const resetCategory = async (data: any) => {
-  return data.map((c: any) => {
-    return {label: c.name, value: c.id};
+// export const resetCategory = async (data: any) => {
+//   return data.map((c: any) => {
+//     return {label: c.name, value: c.id};
+//   });
+// };
+
+export const createPost = async ({title, content, storeId, address}) => {
+  const response = await client.post('posts', {
+    title,
+    describe: content,
+    storeId,
+    addressKo: address,
   });
+  console.log(response);
+  return response.data;
 };

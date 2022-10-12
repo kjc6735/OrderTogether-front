@@ -15,6 +15,8 @@ function WriteBody({
   onChangeContent,
   onChangeCategory,
   category,
+  title,
+  content,
 }) {
   const contentRef = useRef<TextInput>(null);
   return (
@@ -27,12 +29,14 @@ function WriteBody({
         onChangeText={(text: string) => onChangeTitle(text)}
         style={[styles.input, styles.title]}
         placeholder="제목"
+        value={title}
         onSubmitEditing={() => {
           contentRef.current?.focus();
         }}
       />
       <SelectCategory onChange={onChangeCategory} value={category} />
       <TextInput
+        value={content}
         placeholder="내용"
         multiline
         returnKeyType="next"

@@ -23,7 +23,7 @@ const PositionList = ({
   moveTo: (data: any) => any;
 }) => {
   const {data: posts, isLoading: postsLoading} = useQuery('posts', getAllPosts);
-
+  
   return (
     <View
       style={{
