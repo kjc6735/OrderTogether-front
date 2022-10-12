@@ -73,3 +73,8 @@ export const getAllPosts = async () => {
   const {data} = await client.get('/posts');
   return data;
 };
+
+export const getAllStore = async () => {
+  const {data} = await client.get('/stores');
+  return data;
+};

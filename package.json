@@ -21,6 +21,7 @@
     "react": "18.0.0",
     "react-native": "0.69.5",
     "react-native-config": "^1.4.6",
+    "react-native-dropdown-picker": "^5.4.2",
     "react-native-encrypted-storage": "^4.0.2",
     "react-native-nmap": "^0.0.66",
     "react-native-permissions": "^3.6.1",

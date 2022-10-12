@@ -1,6 +1,7 @@
 import Geolocation from '@react-native-community/geolocation';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
+  Button,
   FlatList,
   Pressable,
   StyleSheet,
@@ -47,10 +48,15 @@ const PositionList = ({
             <View
               style={{
                 backgroundColor: select?.id === item.id ? '#F00' : '#fff',
+                padding: 10,
               }}>
               {/* <Text>{item.id}</Text> */}
               <Pressable
-                style={{padding: 16}}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}
                 key={item.id}
                 onPress={() => {
                   onPress(item.id);
@@ -60,6 +66,13 @@ const PositionList = ({
                   {item.id}
                   {item.title}
                 </Text>
+                <View style={{display: 'flex', flexDirection: 'row'}}>
+                  <TouchableOpacity style={{backgroundColor: '#1E6738'}}>
+                    <Text style={{color: '#fff', textAlign: 'center'}}>
+                      Login iOS
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </Pressable>
             </View>
           )}
