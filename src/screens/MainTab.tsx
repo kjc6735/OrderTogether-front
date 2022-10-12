@@ -23,19 +23,7 @@ export default function MainTab() {
         name="Write"
         component={WriteScreen}
         options={{
-          title: '글쓰기',
-          headerRight: () => {
-            return (
-              <View style={{}}>
-                <Icon
-                  name="md-send"
-                  size={25}
-                  color="#f00"
-                  style={{margin: 10}}
-                />
-              </View>
-            );
-          },
+          headerShown: false,
         }}
       />
     </Tab.Navigator>

@@ -78,3 +78,9 @@ export const getAllStore = async () => {
   const {data} = await client.get('/stores');
   return data;
 };
+
+export const resetCategory = async (data: any) => {
+  return data.map((c: any) => {
+    return {label: c.name, value: c.id};
+  });
+};
