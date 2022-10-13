@@ -14,6 +14,7 @@ import {getAllPosts} from '../api';
 import {Post} from '../api/types';
 
 const PositionList = ({
+  posts,
   select,
   onPress,
   moveTo,
@@ -22,8 +23,6 @@ const PositionList = ({
   onPress: (data: any) => any;
   moveTo: (data: any) => any;
 }) => {
-  const {data: posts, isLoading: postsLoading} = useQuery('posts', getAllPosts);
-  
   return (
     <View
       style={{
@@ -63,8 +62,7 @@ const PositionList = ({
                   moveTo({latitude: item.latitude, longitude: item.longitude});
                 }}>
                 <Text style={{backgroundColor: '#fff', fontSize: 20}}>
-                  {item.id}
-                  {item.title}
+                  {item.id}-{item.storeId}-{item.title}
                 </Text>
                 <View style={{display: 'flex', flexDirection: 'row'}}>
                   <TouchableOpacity style={{backgroundColor: '#1E6738'}}>

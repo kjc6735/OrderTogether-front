@@ -15,10 +15,6 @@ function SelectCategory({onChange, value}) {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [filteredStore, setFilteredStore] = useState(null);
 
-  const [selectedStore, setSelectedStore] = useState();
-  //   useEffect(() => {
-  //     console.log(selectedCategory);
-  //   }, [selectedCategory]);
   useEffect(() => {
     store &&
       setFilteredStore(store.filter(s => s.categoryId === selectedCategory));

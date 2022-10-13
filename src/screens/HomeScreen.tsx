@@ -5,7 +5,7 @@ import {FlatList, Text, View} from 'react-native';
 import NaverMapView, {Marker} from 'react-native-nmap';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {useQuery} from 'react-query';
-import {getAllPosts, getCategory, getPosts} from '../api';
+import {getAllPosts, getCategory, getPosts, getPostsByStoreId} from '../api';
 import {Post} from '../api/types';
 import CustomMarker from '../components/CustomMarker';
 import PositionList from '../components/PostList';
@@ -14,118 +14,34 @@ import {useUserState} from '../contexts/UserContext';
 import usePost from '../hooks/usePostTemp';
 import {MainTabParamList} from './types';
 
-function MyMap({
-  select,
-  onPress,
-}: {
-  select: Post | null;
-
-  onPress: (data: any) => any;
-}) {
-  const {data: posts} = useQuery('posts', getAllPosts);
-
-  const [user] = useUserState();
-  const navigation = useNavigation<MainTabParamList>();
-  const nmapRef = useRef<any>();
-
-  useEffect(() => {
-    nmapRef.current = user
-      ? new NaverMapView({
-          style: {width: '100%', height: '100%'},
-          center: {
-            zoom: 15,
-            latitude: user.latitude,
-            longitude: user.longitude,
-          },
-        })
-      : null;
-  }, [user]);
-  return user ? (
-    <NaverMapView
-      ref={ref => (nmapRef.current = ref)}
-      style={{width: '100%', height: '100%'}}
-      showsMyLocationButton={true}
-      center={{
-        zoom: 15,
-        latitude: user.latitude,
-        longitude: user.longitude,
-      }}>
-      <Marker
-        pinColor="#f0f"
-        key={999}
-        coordinate={{
-          latitude: user.latitude,
-          longitude: user.longitude,
-        }}
-      />
-      {posts
-        ? posts.map((post: Post) => (
-            <Marker
-              zIndex={post.id === select?.id ? 999 : undefined}
-              pinColor={post.id === select?.id ? '#00f' : undefined}
-              key={post.id}
-              coordinate={{
-                latitude: post.latitude,
-                longitude: post.longitude,
-              }}
-              onClick={() => {
-                onPress(post.id);
-                nmapRef.current.animateToCoordinate({
-                  latitude: select?.latitude,
-                  longitude: select?.longitude,
-                });
-              }}
-            />
-          ))
-        : null}
-      {/* <FlatList
-        keyExtractor={item => item.id.toString()}
-        data={posts}
-        renderItem={(post: Post) => (
-          <Marker
-            zIndex={post.id === select ? 999 : undefined}
-            pinColor={post.id === select ? '#00f' : undefined}
-            key={post.id.toString()}
-            coordinate={{
-              latitude: post.latitude,
-              longitude: post.longitude,
-            }}
-            onClick={() => onPress(post.id)}
-          />
-        )}
-        windowSize={2}
-      /> */}
-      {/* <NaverMapView
-          ref={ref => {
-            nmapRef.current = ref;
-          }}
-          style={{width: '100%', height: '100%'}}
-          onMapClick={() => {
-            // console.log('clicked map');
-            // console.log(nmapRef);
-            // nmapRef.current.animateToCoordinate({
-            //   latitude: user?.latitude,
-            //   longitude: user?.longitude,
-            // });
-          }}
-        /> */}
-      {/* <MyMap select={select} onPress={onPress} /> */}
-    </NaverMapView>
-  ) : (
-    <View>
-      <Text>암것도없음</Text>
-    </View>
-  );
-}
-
 function HomeScreen() {
   const {data: category, isLoading: categoryLoading} = useQuery(
     'category',
     getCategory,
   );
+
   const [user] = useUserState();
-  const {data: posts, isLoading: postsLoading} = useQuery('posts', getAllPosts);
+  const [selectedStore, setSeletedStore] = useState(null);
+
+  const {data: posts, isLoading: postsLoading} = useQuery(
+    ['posts', selectedStore],
+    ({queryKey}) => {
+      console.log(queryKey);
+      return queryKey[1] ? getPostsByStoreId(queryKey[1]) : getAllPosts();
+    },
+    {
+      onError: e => {
+        console.log(e.response);
+      },
+      onSuccess: data => {
+        console.log(data);
+      },
+    },
+  );
+
+  const [filteredPost, setFilterdPost] = useState();
   const [select, setSelect] = useState<Post | null>(null);
+
   const onPress = useCallback(
     (id: number) => {
       setSelect(posts.filter((post: Post) => post.id === id)[0]);
@@ -133,7 +49,13 @@ function HomeScreen() {
     [setSelect, posts],
   );
   const nmapRef = useRef<any>();
-  const [store, setStore] = useState();
+  useEffect(() => {
+    console.log('refetch');
+  });
+  useEffect(() => {
+    posts && setFilterdPost(posts);
+  }, [posts]);
+
   useEffect(() => {
     nmapRef.current = user
       ? new NaverMapView({
@@ -150,63 +72,60 @@ function HomeScreen() {
     console.log(select);
   });
   const isLoading = categoryLoading || postsLoading;
-
   if (isLoading || !nmapRef.current) {
-    return (
-      <View>
-        <Text>loading...</Text>
-      </View>
-    );
-  } else {
-    return (
-      <View style={{flex: 1}}>
-        {user ? (
-          <NaverMapView
-            ref={ref => (nmapRef.current = ref)}
-            style={{width: '100%', height: '100%'}}
-            showsMyLocationButton={true}
-            center={{
-              zoom: 15,
+    <View>
+      <Text>loading...</Text>
+    </View>;
+  }
+  return (
+    <View style={{flex: 1}}>
+      {user && nmapRef.current && (
+        <NaverMapView
+          ref={ref => (nmapRef.current = ref)}
+          style={{width: '100%', height: '100%'}}
+          showsMyLocationButton={true}
+          center={{
+            zoom: 15,
+            latitude: user.latitude,
+            longitude: user.longitude,
+          }}>
+          <SafeAreaView style={{padding: 10}}>
+            <SelectCategory onChange={setSeletedStore} value={selectedStore} />
+          </SafeAreaView>
+          <Marker
+            pinColor="#f0f"
+            key={999}
+            coordinate={{
               latitude: user.latitude,
               longitude: user.longitude,
-            }}>
-            <SafeAreaView style={{padding: 10}}>
-              <SelectCategory onChange={setStore} value={store} />
-            </SafeAreaView>
-            <Marker
-              pinColor="#f0f"
-              key={999}
-              coordinate={{
-                latitude: user.latitude,
-                longitude: user.longitude,
-              }}
-            />
-            {posts
-              ? posts.map((post: Post) => (
-                  <Marker
-                    zIndex={post.id === select?.id ? 999 : undefined}
-                    pinColor={post.id === select?.id ? '#00f' : undefined}
-                    key={post.id}
-                    coordinate={{
-                      latitude: post.latitude,
-                      longitude: post.longitude,
-                    }}
-                    onClick={() => {
-                      onPress(post.id);
-                    }}
-                  />
-                ))
-              : null}
-          </NaverMapView>
-        ) : null}
-        <PositionList
-          onPress={onPress}
-          select={select}
-          moveTo={nmapRef.current.animateToCoordinate}
-        />
-      </View>
-    );
-  }
+            }}
+          />
+          {posts
+            ? posts.map((post: Post) => (
+                <Marker
+                  zIndex={post.id === select?.id ? 999 : undefined}
+                  pinColor={post.id === select?.id ? '#00f' : undefined}
+                  key={post.id}
+                  coordinate={{
+                    latitude: post.latitude,
+                    longitude: post.longitude,
+                  }}
+                  onClick={() => {
+                    onPress(post.id);
+                  }}
+                />
+              ))
+            : null}
+        </NaverMapView>
+      )}
+      <PositionList
+        posts={posts}
+        onPress={onPress}
+        select={select}
+        moveTo={nmapRef.current?.animateToCoordinate}
+      />
+    </View>
+  );
 }
 
 export default HomeScreen;

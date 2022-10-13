@@ -16,6 +16,7 @@ export default function MainTab() {
         component={HomeScreen}
         options={{
           headerShown: false,
+          unmountOnBlur: true,
         }}
       />
       <Tab.Screen name="Setting" component={SettingScreen} options={{}} />

@@ -84,6 +84,12 @@ export const getAllStore = async () => {
 //   });
 // };
 
+export const getPostsByStoreId = async (id: string) => {
+  const {data} = await client.get(`/stores/${id}/posts`);
+
+  console.log('GET_POST id: ', id, data);
+  return data;
+};
 export const createPost = async ({title, content, storeId, address}) => {
   const response = await client.post('posts', {
     title,

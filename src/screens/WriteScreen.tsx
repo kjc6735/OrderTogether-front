@@ -72,6 +72,7 @@ function WriteScreen() {
               setTitle('');
               setContent('');
               setCategory(0);
+              onGoBack();
             }
           },
         },
