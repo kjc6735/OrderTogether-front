@@ -9,6 +9,7 @@ export type MainTabParamList = {
 export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
+  ChatList: undefined;
 };
 
 export type RootStackNavigationProp =

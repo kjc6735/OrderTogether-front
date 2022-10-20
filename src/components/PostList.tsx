@@ -1,4 +1,5 @@
 import Geolocation from '@react-native-community/geolocation';
+import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   Button,
@@ -23,6 +24,10 @@ const PositionList = ({
   onPress: (data: any) => any;
   moveTo: (data: any) => any;
 }) => {
+  const navigation = useNavigation();
+  const ogChat = useCallback(e => {
+    console.log(e);
+  }, []);
   return (
     <View
       style={{
@@ -65,9 +70,11 @@ const PositionList = ({
                   {item.id}-{item.storeId}-{item.title}
                 </Text>
                 <View style={{display: 'flex', flexDirection: 'row'}}>
-                  <TouchableOpacity style={{backgroundColor: '#1E6738'}}>
+                  <TouchableOpacity
+                    style={{backgroundColor: '#1E6738'}}
+                    onPress={() => navigation.navigate('ChatList')}>
                     <Text style={{color: '#fff', textAlign: 'center'}}>
-                      Login iOS
+                      대화하기
                     </Text>
                   </TouchableOpacity>
                 </View>
