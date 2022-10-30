@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {FlatList, Text, View} from 'react-native';
 import NaverMapView, {Marker} from 'react-native-nmap';
@@ -7,18 +7,19 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import {useQuery} from 'react-query';
 import {getAllPosts, getCategory, getPosts, getPostsByStoreId} from '../api';
 import {Post} from '../api/types';
-import CustomMarker from '../components/CustomMarker';
 import PositionList from '../components/PostList';
 import SelectCategory from '../components/SelectCategory';
 import {useUserState} from '../contexts/UserContext';
 import usePost from '../hooks/usePostTemp';
-import {MainTabParamList} from './types';
+import {MainTabParamList, RootStackNavigationProp} from './types';
 
 function HomeScreen() {
   const {data: category, isLoading: categoryLoading} = useQuery(
     'category',
     getCategory,
   );
+
+  const navigation = useNavigation<RootStackNavigationProp>();
 
   const [user] = useUserState();
   const [selectedStore, setSeletedStore] = useState(null);
@@ -30,7 +31,7 @@ function HomeScreen() {
       return queryKey[1] ? getPostsByStoreId(queryKey[1]) : getAllPosts();
     },
     {
-      onError: e => {
+      onError: (e: AxiosError) => {
         console.log(e.response);
       },
       onSuccess: data => {
@@ -50,6 +51,13 @@ function HomeScreen() {
   );
   const nmapRef = useRef<any>();
 
+  const goChat = useCallback(
+    (postId: number) => {
+      navigation.navigate('Chat');
+    },
+    [navigation],
+  );
+
   useEffect(() => {
     posts && setFilterdPost(posts);
   }, [posts]);
@@ -66,9 +74,7 @@ function HomeScreen() {
         })
       : null;
   }, [user]);
-  useEffect(() => {
-    console.log(select);
-  });
+
   const isLoading = categoryLoading || postsLoading;
   if (isLoading || !nmapRef.current) {
     <View>
@@ -88,7 +94,6 @@ function HomeScreen() {
             longitude: user.longitude,
           }}>
           <SelectCategory onChange={setSeletedStore} value={selectedStore} />
-
           <Marker
             pinColor="#f0f"
             key={999}
@@ -116,6 +121,7 @@ function HomeScreen() {
         </NaverMapView>
       )}
       <PositionList
+        goChat={goChat}
         posts={posts}
         onPress={onPress}
         select={select}

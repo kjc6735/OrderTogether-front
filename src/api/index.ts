@@ -78,6 +78,11 @@ export const getAllStore = async () => {
   return data;
 };
 
+export const getChatList = async (postId: number) => {
+  const {data} = await client.get('/chat');
+  return data;
+};
+
 // export const resetCategory = async (data: any) => {
 //   return data.map((c: any) => {
 //     return {label: c.name, value: c.id};

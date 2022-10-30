@@ -36,8 +36,8 @@ function WriteScreen() {
     getCategory,
   );
   const {data: store, isLoading: storeLoading} = useQuery('store', getAllStore);
-  const [title, setTitle] = useState<string>();
-  const [content, setContent] = useState<string>();
+  const [title, setTitle] = useState<string | null>();
+  const [content, setContent] = useState<string | null>();
   const [category, setCategory] = useState<number | null>(0);
   const {mutate, isSuccess} = usePost();
   const onGoBack = useCallback(() => {

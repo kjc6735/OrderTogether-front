@@ -5,7 +5,7 @@ export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
   Write: undefined;
-  Chatting: undefined;
+  Chat: undefined;
   MainTab: undefined;
 };
 

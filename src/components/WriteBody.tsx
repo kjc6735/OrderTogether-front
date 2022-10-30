@@ -10,6 +10,15 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import SelectCategory from './SelectCategory';
 
+type WriteBodyProp = {
+  onChangeTitle: (text: string) => void;
+  onChangeContent: (text: string) => void;
+  onChangeCategory: () => void;
+  category: any;
+  title: string | null;
+  content: string | null;
+};
+
 function WriteBody({
   onChangeTitle,
   onChangeContent,
@@ -17,7 +26,7 @@ function WriteBody({
   category,
   title,
   content,
-}) {
+}: WriteBodyProp) {
   const contentRef = useRef<TextInput>(null);
   return (
     <KeyboardAvoidingView
@@ -29,14 +38,14 @@ function WriteBody({
         onChangeText={(text: string) => onChangeTitle(text)}
         style={[styles.input, styles.title]}
         placeholder="제목"
-        value={title}
+        value={title ?? undefined}
         onSubmitEditing={() => {
           contentRef.current?.focus();
         }}
       />
       <SelectCategory onChange={onChangeCategory} value={category} />
       <TextInput
-        value={content}
+        value={content ?? undefined}
         placeholder="내용"
         multiline
         returnKeyType="next"

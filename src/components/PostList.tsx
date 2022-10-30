@@ -19,16 +19,14 @@ const PositionList = ({
   select,
   onPress,
   moveTo,
+  goChat,
 }: {
   posts: Post[] | null;
   select: Post | null;
-  onPress: (data: any) => any;
-  moveTo: (data: any) => any;
+  onPress: (data: any) => void;
+  moveTo: (data: any) => void;
+  goChat: (postId: number) => void;
 }) => {
-  const navigation = useNavigation();
-  const ogChat = useCallback(e => {
-    console.log(e);
-  }, []);
   return (
     <View
       style={{

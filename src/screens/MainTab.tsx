@@ -2,6 +2,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import React from 'react';
 import {Button, Text, Touchable, View, ViewBase} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import ChatListScreen from './ChatListScreen';
 import HomeScreen from './HomeScreen';
 import SettingScreen from './SettingScreen';
 import {MainTabParamList} from './types';
@@ -20,6 +21,7 @@ export default function MainTab() {
           unmountOnBlur: true,
         }}
       />
+      <Tab.Screen name="ChatList" component={ChatListScreen} />
       <Tab.Screen name="Setting" component={SettingScreen} options={{}} />
       {/* <Tab.Screen
         name="Write"
