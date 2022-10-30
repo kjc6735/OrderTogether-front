@@ -20,6 +20,7 @@ const PositionList = ({
   onPress,
   moveTo,
 }: {
+  posts: Post[] | null;
   select: Post | null;
   onPress: (data: any) => any;
   moveTo: (data: any) => any;

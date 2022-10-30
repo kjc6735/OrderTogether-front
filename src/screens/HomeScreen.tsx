@@ -49,9 +49,7 @@ function HomeScreen() {
     [setSelect, posts],
   );
   const nmapRef = useRef<any>();
-  useEffect(() => {
-    console.log('refetch');
-  });
+
   useEffect(() => {
     posts && setFilterdPost(posts);
   }, [posts]);
@@ -78,7 +76,7 @@ function HomeScreen() {
     </View>;
   }
   return (
-    <View style={{flex: 1}}>
+    <SafeAreaView style={{flex: 1}}>
       {user && nmapRef.current && (
         <NaverMapView
           ref={ref => (nmapRef.current = ref)}
@@ -89,9 +87,8 @@ function HomeScreen() {
             latitude: user.latitude,
             longitude: user.longitude,
           }}>
-          <SafeAreaView style={{padding: 10}}>
-            <SelectCategory onChange={setSeletedStore} value={selectedStore} />
-          </SafeAreaView>
+          <SelectCategory onChange={setSeletedStore} value={selectedStore} />
+
           <Marker
             pinColor="#f0f"
             key={999}
@@ -124,7 +121,7 @@ function HomeScreen() {
         select={select}
         moveTo={nmapRef.current?.animateToCoordinate}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {useQuery} from 'react-query';
 import {getAllStore, getCategory} from '../api';
 
-function SelectCategory({onChange, value}) {
+function SelectCategory({onChange, value}: {onChange: () => void; value: any}) {
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
   const {data: store, isLoading: storeLoading} = useQuery('store', getAllStore);
@@ -14,21 +14,17 @@ function SelectCategory({onChange, value}) {
   );
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [filteredStore, setFilteredStore] = useState(null);
-
+  const [category, setCategory] = useState();
   useEffect(() => {
     store &&
       setFilteredStore(store.filter(s => s.categoryId === selectedCategory));
   }, [store, selectedCategory]);
-  if (storeLoading || categoryLoading) {
-    return (
-      <View>
-        <Text>loading...</Text>
-      </View>
-    );
-  }
+  useLayoutEffect(() => {
+    setCategory(categories);
+  }, [categories]);
   return (
     <View>
-      {categories && (
+      {category && (
         <DropDownPicker
           open={open}
           schema={{
@@ -36,7 +32,7 @@ function SelectCategory({onChange, value}) {
             value: 'id',
           }}
           value={selectedCategory}
-          items={categories}
+          items={category!}
           setOpen={setOpen}
           setValue={setSelectedCategory}
           zIndex={900}
