@@ -12,7 +12,7 @@ export default function RootStack() {
   const [user] = useUserState();
 
   return (
-    <Stack.Navigator initialRouteName="Login">
+    <Stack.Navigator initialRouteName={user ? 'MainTab' : 'Login'}>
       {!user ? (
         <>
           <Stack.Screen name="Login" component={LoginScreen} />

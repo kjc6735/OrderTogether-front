@@ -1,19 +1,19 @@
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-
 export type MainTabParamList = {
   Home: undefined;
   Setting: undefined;
-  Write: undefined;
+  ChatList: undefined;
 };
 
 export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
-  ChatList: undefined;
+  Write: undefined;
+  Chatting: string;
+  MainTab: MainTabParamList;
 };
 
-export type RootStackNavigationProp =
-  NativeStackNavigationProp<RootStackParamList>;
+// export type RootStackNavigationProp =
+//   NativeStackNavigationProp<RootStackParamList>;
 
 export type ILocation = {
   latitude: number;
