@@ -10,9 +10,10 @@ import {
   View,
 } from 'react-native';
 import {useLogin} from '../hooks/useLogin';
+import {RootStackNavigationProp} from './types';
 
 export default function LoginScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<RootStackNavigationProp>();
   const [id, setId] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const {mutate} = useLogin();

@@ -6,6 +6,7 @@ export type RootStackParamList = {
   Register: undefined;
   Write: undefined;
   Chatting: undefined;
+  MainTab: undefined;
 };
 
 export type MainTabParamList = {
