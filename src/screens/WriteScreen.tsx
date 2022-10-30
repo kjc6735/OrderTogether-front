@@ -83,7 +83,7 @@ function WriteScreen() {
         ,
       ],
     });
-  }, [title, category, content]);
+  }, [title, category, content, isSuccess, mutate, onGoBack, user]);
   if (categoryLoading || storeLoading) {
     return (
       <View>
