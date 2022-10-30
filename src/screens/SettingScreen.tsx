@@ -2,6 +2,7 @@ import Postcode from '@actbase/react-daum-postcode';
 import React, {useCallback, useState} from 'react';
 import {
   FlatList,
+  GestureResponderEvent,
   KeyboardAvoidingView,
   Pressable,
   StyleSheet,
@@ -14,11 +15,15 @@ import Inform from '../components/Inform';
 import {useUserState} from '../contexts/UserContext';
 import userStorage from '../storages/userStorage';
 const SettingScreen = () => {
-  const [addr, setAddr] = useState();
+  const [addr, setAddr] = useState<{
+    zonecode: number;
+    address: string;
+    addressEn: string;
+  }>();
   const [showPostcode, setShowPostcode] = useState(false);
   const [user, setUser] = useUserState();
   const onPress = useCallback(
-    e => {
+    (e: GestureResponderEvent) => {
       Inform({
         title: '알림',
         message: '로그아웃 하시겠습니까?',
@@ -50,7 +55,7 @@ const SettingScreen = () => {
             onSelected={data => {
               const {zonecode, address, addressEnglish} = data;
               setAddr({
-                zonecode: `${zonecode}`,
+                zonecode: zonecode,
                 address,
                 addressEn: addressEnglish,
               });

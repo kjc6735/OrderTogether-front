@@ -20,10 +20,10 @@ export default function RegisterScreen() {
   const [showPostcodePage, setShowPostcodePage] = useState<boolean>(false);
   const [displayName, setDisplayName] = useState<string>('');
   const [addr, setAddr] = useState<{
-    zonecode: string;
+    zonecode: number;
     address: string;
     addressEn: string;
-    detail?: string | null;
+    detail?: string;
   } | null>();
 
   const {mutate, isLoading, isSuccess} = useRegister();
@@ -70,7 +70,7 @@ export default function RegisterScreen() {
           onSelected={data => {
             const {zonecode, address, addressEnglish} = data;
             setAddr({
-              zonecode: `${zonecode}`,
+              zonecode: zonecode,
               address,
               addressEn: addressEnglish,
             });
@@ -111,7 +111,7 @@ export default function RegisterScreen() {
                 style={[styles.input, styles.addressInput, styles.disabled]}
                 editable={false}
                 selectTextOnFocus={false}
-                value={addr?.zonecode}
+                value={addr?.zonecode.toString()}
               />
               <Pressable
                 style={({pressed}) => [
@@ -136,7 +136,7 @@ export default function RegisterScreen() {
               style={[styles.input]}
               placeholder="상세주소"
               value={addr?.detail}
-              onChangeText={text => setAddr({...addr, detail: text})}
+              onChangeText={(text: string) => setAddr({...addr!, detail: text})}
             />
             <Pressable
               style={({pressed}) => [

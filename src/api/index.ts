@@ -36,7 +36,7 @@ export const register = async ({
   displayName: string;
   password: string;
   addressKo: string;
-  zonecode: string;
+  zonecode: number;
   detail: null | undefined | string;
   addressEn: string;
 }) => {
@@ -90,7 +90,17 @@ export const getPostsByStoreId = async (id: string) => {
   console.log('GET_POST id: ', id, data);
   return data;
 };
-export const createPost = async ({title, content, storeId, address}) => {
+export const createPost = async ({
+  title,
+  content,
+  storeId,
+  address,
+}: {
+  title: string;
+  content: string;
+  storeId: number;
+  address: string;
+}) => {
   const response = await client.post('posts', {
     title,
     describe: content,
