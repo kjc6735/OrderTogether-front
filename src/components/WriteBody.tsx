@@ -43,7 +43,11 @@ function WriteBody({
           contentRef.current?.focus();
         }}
       />
-      <SelectCategory onChange={onChangeCategory} value={category} />
+      <SelectCategory
+        onChange={onChangeCategory}
+        value={category}
+        fixed={false}
+      />
       <TextInput
         value={content ?? undefined}
         placeholder="내용"

@@ -9,6 +9,7 @@ export const useLogin = () => {
   const [, setUser] = useUserState();
   return useMutation(login, {
     onSuccess: async data => {
+      console.log('success android');
       delete data.message;
       delete data.success;
       setUser(data.user);

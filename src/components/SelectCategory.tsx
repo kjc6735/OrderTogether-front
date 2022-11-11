@@ -5,7 +5,7 @@ import React, {
   useLayoutEffect,
   useState,
 } from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Platform, StyleSheet, Text, View} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {useQuery} from 'react-query';
 import {getAllStore, getCategory} from '../api';
@@ -13,9 +13,11 @@ import {getAllStore, getCategory} from '../api';
 function SelectCategory({
   onChange,
   value,
+  fixed = true,
 }: {
   onChange: Dispatch<SetStateAction<null>>;
   value: any;
+  fixed: boolean | undefined;
 }) {
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
@@ -37,7 +39,12 @@ function SelectCategory({
     setCategory(categories);
   }, [categories]);
   return (
-    <View>
+    <View
+      style={[
+        styles.wrapper,
+        fixed && styles.fixed,
+        fixed && Platform.OS === 'ios' && styles.ios,
+      ]}>
       {category && (
         <DropDownPicker
           open={open}
@@ -77,5 +84,17 @@ function SelectCategory({
     </View>
   );
 }
-
+const styles = StyleSheet.create({
+  wrapper: {
+    width: '100%',
+    zIndex: 999,
+  },
+  fixed: {
+    position: 'absolute',
+    top: 20,
+  },
+  ios: {
+    top: 60,
+  },
+});
 export default SelectCategory;

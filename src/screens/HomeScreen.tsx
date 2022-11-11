@@ -1,4 +1,4 @@
-import {useNavigation} from '@react-navigation/native';
+import {useIsFocused, useNavigation} from '@react-navigation/native';
 import axios, {AxiosError} from 'axios';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {FlatList, Text, View} from 'react-native';
@@ -10,36 +10,46 @@ import {Post} from '../api/types';
 import PositionList from '../components/PostList';
 import SelectCategory from '../components/SelectCategory';
 import {useUserState} from '../contexts/UserContext';
+import {useChat} from '../hooks/useChat';
 import usePost from '../hooks/usePostTemp';
-import {MainTabParamList, RootStackNavigationProp} from './types';
+import {DeviceEventEmitter} from 'react-native';
+
+import {
+  MainTabNavigationProp,
+  MainTabParamList,
+  RootStackNavigationProp,
+} from './types';
+import Markers from '../components/Markers';
+import GoWriteButton from '../components/GoWriteButton';
+import {useSocketState} from '../contexts/SocketContext';
 
 function HomeScreen() {
   const {data: category, isLoading: categoryLoading} = useQuery(
     'category',
     getCategory,
   );
-
-  const navigation = useNavigation<RootStackNavigationProp>();
+  const [, setSocket] = useSocketState();
+  const isFocused = useIsFocused();
+  const navigation = useNavigation<MainTabNavigationProp>();
 
   const [user] = useUserState();
   const [selectedStore, setSeletedStore] = useState(null);
 
-  const {data: posts, isLoading: postsLoading} = useQuery(
+  const {
+    data: posts,
+    isLoading: postsLoading,
+    refetch,
+  } = useQuery(
     ['posts', selectedStore],
     ({queryKey}) => {
-      console.log(queryKey);
       return queryKey[1] ? getPostsByStoreId(queryKey[1]) : getAllPosts();
     },
     {
-      onError: (e: AxiosError) => {
-        console.log(e.response);
-      },
-      onSuccess: data => {
-        console.log(data);
-      },
+      onError: (e: AxiosError) => {},
+      onSuccess: data => {},
     },
   );
-
+  const {data: chatUser, mutate, isSuccess} = useChat();
   const [filteredPost, setFilterdPost] = useState();
   const [select, setSelect] = useState<Post | null>(null);
 
@@ -50,12 +60,12 @@ function HomeScreen() {
     [setSelect, posts],
   );
   const nmapRef = useRef<any>();
-
+  const [mapLoading, setMapLoading] = useState(false);
   const goChat = useCallback(
-    (postId: number) => {
-      navigation.navigate('Chat');
+    async (postId: number) => {
+      mutate(postId);
     },
-    [navigation],
+    [mutate],
   );
 
   useEffect(() => {
@@ -63,71 +73,60 @@ function HomeScreen() {
   }, [posts]);
 
   useEffect(() => {
-    nmapRef.current = user
-      ? new NaverMapView({
-          style: {width: '100%', height: '100%'},
-          center: {
-            zoom: 15,
-            latitude: user.latitude,
-            longitude: user.longitude,
-          },
-        })
-      : null;
-  }, [user]);
-
+    nmapRef.current = null;
+    refetch();
+  }, [refetch, isFocused]);
+  useEffect(() => {
+    if (!user) {
+      navigation.navigate('Login');
+    }
+  }, [user, navigation]);
   const isLoading = categoryLoading || postsLoading;
-  if (isLoading || !nmapRef.current) {
+  if (isLoading && !user) {
     <View>
       <Text>loading...</Text>
     </View>;
   }
   return (
-    <SafeAreaView style={{flex: 1}}>
-      {user && nmapRef.current && (
+    user && (
+      <SafeAreaView style={{flex: 1, position: 'relative'}}>
+        <SelectCategory onChange={setSeletedStore} value={selectedStore} />
+
         <NaverMapView
-          ref={ref => (nmapRef.current = ref)}
-          style={{width: '100%', height: '100%'}}
+          ref={ref => {
+            return (nmapRef.current = ref);
+          }}
+          style={{width: '100%', height: '100%', zIndex: 0}}
           showsMyLocationButton={true}
           center={{
             zoom: 15,
-            latitude: user.latitude,
-            longitude: user.longitude,
+            latitude: user!.latitude,
+            longitude: user!.longitude,
           }}>
-          <SelectCategory onChange={setSeletedStore} value={selectedStore} />
-          <Marker
-            pinColor="#f0f"
-            key={999}
-            coordinate={{
-              latitude: user.latitude,
-              longitude: user.longitude,
-            }}
-          />
-          {posts
-            ? posts.map((post: Post) => (
-                <Marker
-                  zIndex={post.id === select?.id ? 999 : undefined}
-                  pinColor={post.id === select?.id ? '#00f' : undefined}
-                  key={post.id}
-                  coordinate={{
-                    latitude: post.latitude,
-                    longitude: post.longitude,
-                  }}
-                  onClick={() => {
-                    onPress(post.id);
-                  }}
-                />
-              ))
-            : null}
+          {nmapRef.current && (
+            <>
+              <Marker
+                pinColor="#f0f"
+                key={999}
+                coordinate={{
+                  latitude: user!.latitude,
+                  longitude: user!.longitude,
+                }}
+              />
+              <Markers posts={posts} onPress={onPress} select={select} />
+            </>
+          )}
         </NaverMapView>
-      )}
-      <PositionList
-        goChat={goChat}
-        posts={posts}
-        onPress={onPress}
-        select={select}
-        moveTo={nmapRef.current?.animateToCoordinate}
-      />
-    </SafeAreaView>
+
+        <PositionList
+          goChat={goChat}
+          posts={posts}
+          onPress={onPress}
+          select={select}
+          moveTo={nmapRef.current?.animateToCoordinate}
+        />
+      </SafeAreaView>
+    )
   );
 }
 

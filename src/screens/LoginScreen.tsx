@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -9,21 +9,36 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import Inform from '../components/Inform';
+import {useUserState} from '../contexts/UserContext';
+import useLoginEffect from '../effects/useLoginEffect';
 import {useLogin} from '../hooks/useLogin';
-import {RootStackNavigationProp} from './types';
+import {MainTabNavigationProp, RootStackNavigationProp} from './types';
 
 export default function LoginScreen() {
+  const [user] = useUserState();
   const navigation = useNavigation<RootStackNavigationProp>();
   const [id, setId] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const {mutate} = useLogin();
+  const {mutate, isSuccess} = useLogin();
   const onPress = useCallback(async () => {
     if (!id || !password) {
-      console.log('아이디를 모두 입력해주세요.');
       return;
     }
     await mutate({id, password});
   }, [id, password, mutate]);
+  useEffect(() => {
+    if (isSuccess) {
+      console.log('is');
+      navigation.replace('MainTab');
+    }
+  }, [isSuccess, navigation]);
+  useEffect(() => {
+    if (user) {
+      navigation.replace('MainTab');
+    }
+  }, [navigation, user]);
+
   return (
     <KeyboardAvoidingView
       style={styles.block}
@@ -50,7 +65,7 @@ export default function LoginScreen() {
               styles.submit,
               Platform.OS === 'ios' && pressed && styles.submitPressed,
             ]}
-            onPress={onPress}>
+            onPress={() => onPress()}>
             <Text>로그인</Text>
           </Pressable>
           <Text onPress={() => navigation.navigate('Register')}>회원가입</Text>

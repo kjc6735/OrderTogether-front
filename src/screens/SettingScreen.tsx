@@ -1,4 +1,5 @@
 import Postcode from '@actbase/react-daum-postcode';
+import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useState} from 'react';
 import {
   FlatList,
@@ -7,6 +8,7 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -20,63 +22,48 @@ const SettingScreen = () => {
     address: string;
     addressEn: string;
   }>();
+  const navigation = useNavigation();
   const [showPostcode, setShowPostcode] = useState(false);
   const [user, setUser] = useUserState();
-  const onPress = useCallback(
-    (e: GestureResponderEvent) => {
-      Inform({
-        title: '알림',
-        message: '로그아웃 하시겠습니까?',
-        objArr: [
-          {
-            text: '확인',
-            onPress: async () => {
-              setUser(null);
-              setToken(null);
-              await userStorage().clear();
-            },
-          },
-          {
-            text: '취소',
-            onPress: () => {},
-          },
-        ],
-      });
-    },
-    [setUser],
-  );
-  return (
-    <SafeAreaView style={styles.wrapper}>
-      <KeyboardAvoidingView>
-        {showPostcode ? (
-          <Postcode
-            style={styles.postcode}
-            jsOptions={{animation: true}}
-            onSelected={data => {
-              const {zonecode, address, addressEnglish} = data;
-              setAddr({
-                zonecode: zonecode,
-                address,
-                addressEn: addressEnglish,
+  const onPress = useCallback(() => {
+    Inform({
+      title: '알림',
+      message: '로그아웃 하시겠습니까?',
+      objArr: [
+        {
+          text: '확인',
+          onPress: async () => {
+            setUser(null);
+            setToken(null);
+            await userStorage()
+              .clear()
+              .then(() => {
+                // navigation.reset({routes: [{name: 'Login'}]});
+                navigation.navigate('Login');
               });
-              setShowPostcode(false);
-            }}
-            onError={function (error: unknown): void {
-              throw new Error('Function not implemented.');
-            }}
-          />
-        ) : (
-          <View>
-            <Pressable onPress={onPress}>
-              <Text>로그아웃</Text>
-            </Pressable>
-            <Pressable onPress={() => setShowPostcode(true)}>
-              <Text>주소지</Text>
-            </Pressable>
-          </View>
-        )}
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+          },
+        },
+        {
+          text: '취소',
+          onPress: () => {},
+        },
+      ],
+    });
+  }, [setUser, navigation]);
+  return (
+    <>
+      <TouchableOpacity
+        onPress={e => onPress()}
+        style={{backgroundColor: '#e2e2e2', padding: 10}}>
+        <Text style={{fontSize: 20}}>로그아웃</Text>
+      </TouchableOpacity>
+      <View style={{height: 1}} />
+      {/* <TouchableOpacity
+        onPress={e => navigation.navigate('AddressReset')}
+        style={{backgroundColor: '#e2e2e2', padding: 10}}>
+        <Text style={{fontSize: 20}}>위치 변경</Text>
+      </TouchableOpacity> */}
+    </>
   );
 };
 

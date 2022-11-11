@@ -56,6 +56,8 @@ function InApp() {
                 },
               ],
             );
+          } else {
+            console.log('result is ', result);
           }
         })
         .catch(() => {
@@ -63,19 +65,7 @@ function InApp() {
         });
     }
   }, []);
-  return user ? <MainTab /> : <RootStack />;
-  //   <Tab.Navigator>
-  //     <Tab.Screen
-  //       name="Home"
-  //       component={HomeScreen}
-  //       options={{headerShown: false}}
-  //     />
-  //   </Tab.Navigator>
-  // ) : (
-  //   <Stack.Navigator>
-  //     <Stack.Screen name="Login" component={LoginScreen} />
-  //     <Stack.Screen name="Register" component={RegisterScreen} />
-  //   </Stack.Navigator>
+  return <RootStack />;
 }
 
 export default InApp;

@@ -4,7 +4,7 @@ import {Platform} from 'react-native';
 export const client = axios.create({
   baseURL:
     Platform.OS === 'android'
-      ? 'http://172.30.9.131:3000'
+      ? 'http://10.0.2.2:3000'
       : 'http://localhost:3000',
   // baseURL: '10.0.2.2:3000',
 });
@@ -57,6 +57,11 @@ export const getCategory = async () => {
   return data;
 };
 
+export const removePost = async (postId: number) => {
+  const {data} = await client.delete(`/posts/${postId}`);
+  return data;
+};
+
 export const getSearchData = async (category: string) => {
   const {data} = await client.get(`/search/${category}`);
   return data;
@@ -73,13 +78,19 @@ export const getAllPosts = async () => {
   return data;
 };
 
+export const getMyPosts = async () => {
+  const {data} = await client.get('/posts/user/me');
+  return data;
+};
+
 export const getAllStore = async () => {
   const {data} = await client.get('/stores');
   return data;
 };
 
-export const getChatList = async (postId: number) => {
-  const {data} = await client.get('/chat');
+export const getChatList = async () => {
+  const {data} = await client.get('/room/mychat');
+  console.log(data);
   return data;
 };
 
@@ -114,4 +125,41 @@ export const createPost = async ({
   });
   console.log(response);
   return response.data;
+};
+export async function postChat(url, message) {
+  const {data} = await client.post(`/room/${url}/dm`, {
+    message,
+  });
+}
+
+export const createChat = async (postId: number) => {
+  const {data} = await client.post('/room', {postId});
+  return data;
+};
+
+//"https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords={입력_좌표}&sourcecrs={좌표계}&orders={변환_작업_이름}&output={출력_형식}" \
+export const naverGetReverse = async ({
+  longitude,
+  latitude,
+}: {
+  longitude: any;
+  latitude: any;
+}) => {
+  console.log(longitude);
+  const output = 'json';
+  const clientId = 'wj74neb00m';
+  const secret = 'P4is833qIFwomIry8TEVJcNg3g8YZXzLLANu0R0V';
+  const header = {
+    'X-NCP-APIGW-API-KEY-ID': clientId,
+    'X-NCP-APIGW-API-KEY': secret,
+  };
+  const url = `https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?request=coordsToaddr&coords=${longitude},${latitude}&output=${output}&orders=addr,admcode,roadaddr`;
+  console.log(url);
+  const {data} = await axios.get(url, {
+    headers: {
+      ...header,
+    },
+  });
+  console.log(JSON.stringify(data));
+  return data;
 };

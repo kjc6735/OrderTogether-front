@@ -13,6 +13,8 @@ import {
 import {useQuery} from 'react-query';
 import {getAllPosts} from '../api';
 import {Post} from '../api/types';
+import {MainTabNavigationProp, RootStackNavigationProp} from '../screens/types';
+import Inform from './Inform';
 
 const PositionList = ({
   posts,
@@ -25,8 +27,10 @@ const PositionList = ({
   select: Post | null;
   onPress: (data: any) => void;
   moveTo: (data: any) => void;
-  goChat: (postId: number) => void;
+  goChat: (postId: number) => Promise<void>;
 }) => {
+  const navigation = useNavigation<MainTabNavigationProp>();
+
   return (
     <View
       style={{
@@ -50,10 +54,9 @@ const PositionList = ({
           renderItem={({item}) => (
             <View
               style={{
-                backgroundColor: select?.id === item.id ? '#F00' : '#fff',
+                backgroundColor: select?.id === item.id ? '#e4e4e4' : '#fff',
                 padding: 10,
               }}>
-              {/* <Text>{item.id}</Text> */}
               <Pressable
                 style={{
                   display: 'flex',
@@ -65,15 +68,38 @@ const PositionList = ({
                   onPress(item.id);
                   moveTo({latitude: item.latitude, longitude: item.longitude});
                 }}>
-                <Text style={{backgroundColor: '#fff', fontSize: 20}}>
-                  {item.id}-{item.storeId}-{item.title}
-                </Text>
-                <View style={{display: 'flex', flexDirection: 'row'}}>
+                <Text style={{fontSize: 20}}>{item.title}</Text>
+                <View
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: 5,
+                    overflow: 'hidden',
+                  }}>
                   <TouchableOpacity
                     style={{backgroundColor: '#1E6738'}}
-                    onPress={() => navigation.navigate('ChatList')}>
-                    <Text style={{color: '#fff', textAlign: 'center'}}>
-                      대화하기
+                    // onPress={() => goChat(item.id)}
+                    onPress={() =>
+                      Inform({
+                        title: item.title,
+                        message: item.describe,
+                        objArr: [
+                          {
+                            text: '대화하기',
+                            onPress: async () => await goChat(item.id),
+                          },
+                          {
+                            text: '취소',
+                            onPress: () => {},
+                          },
+                        ],
+                      })
+                    }>
+                    <Text
+                      style={{color: '#fff', textAlign: 'center', padding: 10}}>
+                      내용보기
                     </Text>
                   </TouchableOpacity>
                 </View>

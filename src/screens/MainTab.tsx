@@ -4,6 +4,7 @@ import {Button, Text, Touchable, View, ViewBase} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ChatListScreen from './ChatListScreen';
 import HomeScreen from './HomeScreen';
+import MyPostsScreen from './MyPosts';
 import SettingScreen from './SettingScreen';
 import {MainTabParamList} from './types';
 import WriteScreen from './WriteScreen';
@@ -18,18 +19,19 @@ export default function MainTab() {
         component={HomeScreen}
         options={{
           headerShown: false,
-          unmountOnBlur: true,
         }}
       />
-      <Tab.Screen name="ChatList" component={ChatListScreen} />
-      <Tab.Screen name="Setting" component={SettingScreen} options={{}} />
-      {/* <Tab.Screen
-        name="Write"
-        component={WriteScreen}
-        options={{
-          headerShown: false,
-        }}
-      /> */}
+      <Tab.Screen
+        name="ChatList"
+        component={ChatListScreen}
+        options={{title: '채팅 리스트'}}
+      />
+      <Tab.Screen
+        name="Setting"
+        component={SettingScreen}
+        options={{title: '세팅'}}
+      />
+      <Tab.Screen name="MyPosts" component={MyPostsScreen} />
     </Tab.Navigator>
   );
 }
