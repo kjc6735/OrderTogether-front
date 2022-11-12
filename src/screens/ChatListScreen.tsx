@@ -7,9 +7,7 @@ import {useUserState} from '../contexts/UserContext';
 
 function ChatListScreen() {
   const [user] = useUserState();
-  const {data: chatList, isLoading} = useQuery('chatList', () =>
-    getChatList(user!.id),
-  );
+  const {data: chatList, isLoading} = useQuery('chatList', getChatList);
 
   if (isLoading) {
     return (
@@ -45,7 +43,10 @@ function ChatListScreen() {
                 }}
                 key={item.id}
                 onPress={() => {}}>
-                <Text style={{fontSize: 20}}>{item.title}</Text>
+                <Text
+                  style={{
+                    fontSize: 20,
+                  }}>{`${item.user.displayName} ${item.room.name}`}</Text>
                 <View
                   style={{
                     display: 'flex',
