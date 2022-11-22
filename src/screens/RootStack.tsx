@@ -30,7 +30,13 @@ export default function RootStack() {
         }}
       />
       <Stack.Screen name="Register" component={RegisterScreen} />
-
+      <Stack.Screen
+        name="Write"
+        component={WriteScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
       <Stack.Screen
         name="MainTab"
         component={MainTab}

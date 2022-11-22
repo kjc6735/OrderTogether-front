@@ -18,7 +18,6 @@ function ChatListScreen() {
   }
   return (
     <>
-      <GoWriteButton />
       <View
         style={{
           backgroundColor: '#f2f2f2',
@@ -69,6 +68,7 @@ function ChatListScreen() {
             );
           }}
         />
+        <GoWriteButton />
       </View>
     </>
   );

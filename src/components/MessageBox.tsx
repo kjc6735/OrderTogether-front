@@ -1,7 +1,13 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 
-export default function MessageBox() {
+export default function MessageBox({
+  name,
+  message,
+}: {
+  name: string;
+  message: string;
+}) {
   return (
     <View
       style={{
@@ -17,8 +23,8 @@ export default function MessageBox() {
           borderRadius: 10,
           padding: 5,
         }}>
-        <Text style={{fontSize: 18, fontWeight: 'bold'}}>title</Text>
-        <Text style={{fontSize: 20}}>title</Text>
+        <Text style={{fontSize: 18, fontWeight: 'bold'}}>{name}</Text>
+        <Text style={{fontSize: 20}}>{message}</Text>
       </View>
     </View>
   );

@@ -22,6 +22,7 @@ import io from 'socket.io-client';
 import {client, postChat} from '../api';
 import MessageBox from '../components/MessageBox';
 import {useSocketState} from '../contexts/SocketContext';
+import {useUserState} from '../contexts/UserContext';
 import {ChatScreenRouteProp} from './types';
 const url =
   Platform.OS === 'ios' ? 'http://localhost:81' : 'http://10.0.2.2:81';
@@ -29,8 +30,9 @@ const namespace = '/dm';
 const socket = io(`${url}${namespace}`);
 
 export default function ChatScreen() {
+  const [user] = useUserState();
   const {params} = useRoute<ChatScreenRouteProp>();
-  const [message, setMessage] = useState<string[]>([]);
+  const [message, setMessage] = useState<{}[]>([{}]);
   const inputRef = useRef<TextInput | null>(null);
   const [input, setInput] = useState<string | undefined>('');
   // const {data, isSuccess, refetch} = useMutation(postChat, {
@@ -39,32 +41,35 @@ export default function ChatScreen() {
   //   },
   // });
   // console.log('params', params.data.room.name);
+
   const onPress = useCallback(
     (e: any) => {
-      socket.emit('message', {roomId: params.data.room.name, input});
+      socket.emit('sendToServer', {
+        roomId: params.data.room.name,
+        message: input,
+        user: user?.displayName,
+      });
       setInput('');
     },
-    [input, params.data.room.name],
+    [input, params.data.room.name, user?.displayName],
   );
 
   useEffect(() => {
-    // console.log('params', params.data.room.name);
-    // socket.on('connect', () => {});
-    // console.log('connected..?');
-    // socket.emit('join', {roomId: params.data.room.name});
-
-    socket.on('connection', s => {
-      s.join(params.data.room.name);
-    });
-    socket.on('message', res => {
-      console.log('recieved message: ', res);
-    });
+    socket.on('connection', () => {});
+    socket.emit('join', {roomId: params.data.room.name, os: Platform.OS});
     return () => {
       socket.on('disconnect', () => {
         console.log(socket.id);
       });
     };
-  }, [params.data.room.name]);
+  }, []);
+
+  useEffect(() => {
+    socket.on('message', res => {
+      console.log('res is ', res);
+      setMessage(prev => [...prev, res]);
+    });
+  }, []);
 
   return (
     <SafeAreaProvider>
@@ -73,7 +78,11 @@ export default function ChatScreen() {
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={styles.avoid}>
           <View style={styles.contents}>
-            <Text>test</Text>
+            {message.map((msg, idx) => {
+              return (
+                <MessageBox key={idx} name={msg.user} message={msg.message} />
+              );
+            })}
           </View>
           <View style={styles.inputBlock}>
             <TextInput
