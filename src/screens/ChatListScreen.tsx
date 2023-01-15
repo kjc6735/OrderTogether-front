@@ -1,14 +1,25 @@
+import {useNavigation} from '@react-navigation/native';
 import React, {useEffect} from 'react';
 import {FlatList, Pressable, Text, TouchableOpacity, View} from 'react-native';
 import {useQuery} from 'react-query';
 import {getChatList} from '../api';
 import GoWriteButton from '../components/GoWriteButton';
 import {useUserState} from '../contexts/UserContext';
+import {ChatScreenRouteProp, MainTabNavigationProp} from './types';
 
 function ChatListScreen() {
+  const navigation = useNavigation<MainTabNavigationProp>();
   const [user] = useUserState();
-  const {data: chatList, isLoading} = useQuery('chatList', getChatList);
-
+  const {
+    data: chatList,
+    isLoading,
+    refetch,
+  } = useQuery('chatList', getChatList);
+  useEffect(() => {
+    if (!chatList) {
+      refetch();
+    }
+  }, [chatList, refetch]);
   if (isLoading) {
     return (
       <View>
@@ -41,11 +52,17 @@ function ChatListScreen() {
                   justifyContent: 'space-between',
                 }}
                 key={item.id}
-                onPress={() => {}}>
+                onPress={() => {
+                  console.log(item.id);
+                  navigation.navigate('Chat', {
+                    title: item.user.userId,
+                    room: item.room.name,
+                  });
+                }}>
                 <Text
                   style={{
                     fontSize: 20,
-                  }}>{`${item.user.displayName} ${item.room.name}`}</Text>
+                  }}>{`${item.user.userId}`}</Text>
                 <View
                   style={{
                     display: 'flex',

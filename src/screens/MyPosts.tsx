@@ -18,11 +18,7 @@ export default function MyPostsScreen() {
     isLoading: postsLoading,
     refetch,
   } = useQuery(['posts', 'myPosts'], getMyPosts);
-  if (postsLoading) {
-    <View>
-      <Text>loading...</Text>
-    </View>;
-  }
+
   const {mutate, isSuccess} = useMutation(removePost, {
     onSuccess: data => {
       console.log(data);
@@ -49,7 +45,13 @@ export default function MyPostsScreen() {
   useEffect(() => {
     refetch();
   }, [isSuccess, refetch]);
-
+  if (postsLoading) {
+    return (
+      <View>
+        <Text>loading...</Text>
+      </View>
+    );
+  }
   return (
     <FlatList
       style={{backgroundColor: '#fff'}}

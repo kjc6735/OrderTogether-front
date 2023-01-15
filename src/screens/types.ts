@@ -4,7 +4,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 export type RootStackParamList = {
   Chat: {
     title: string;
-    data: any;
+    room: string;
   };
   Login: undefined;
   Register: undefined;

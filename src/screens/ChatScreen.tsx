@@ -32,7 +32,7 @@ const socket = io(`${url}${namespace}`);
 export default function ChatScreen() {
   const [user] = useUserState();
   const {params} = useRoute<ChatScreenRouteProp>();
-  const [message, setMessage] = useState<{}[]>([{}]);
+  const [message, setMessage] = useState<{}[]>([]);
   const inputRef = useRef<TextInput | null>(null);
   const [input, setInput] = useState<string | undefined>('');
   // const {data, isSuccess, refetch} = useMutation(postChat, {
@@ -45,18 +45,20 @@ export default function ChatScreen() {
   const onPress = useCallback(
     (e: any) => {
       socket.emit('sendToServer', {
-        roomId: params.data.room.name,
+        roomId: params.room,
         message: input,
         user: user?.displayName,
       });
       setInput('');
     },
-    [input, params.data.room.name, user?.displayName],
+    [input, params.room, user?.displayName],
   );
-
+  useEffect(() => {
+    console.log(message.length);
+  }, []);
   useEffect(() => {
     socket.on('connection', () => {});
-    socket.emit('join', {roomId: params.data.room.name, os: Platform.OS});
+    socket.emit('join', {roomId: params.room, os: Platform.OS});
     return () => {
       socket.on('disconnect', () => {
         console.log(socket.id);

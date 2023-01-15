@@ -26,6 +26,7 @@ export default function LoginScreen() {
       return;
     }
     await mutate({id, password});
+    console.log('test');
   }, [id, password, mutate]);
   useEffect(() => {
     if (isSuccess) {
@@ -47,14 +48,16 @@ export default function LoginScreen() {
         <View>
           <TextInput
             style={styles.input}
-            placeholder="id"
+            placeholderTextColor={'#bbb'}
+            placeholder="이메일 주소 또는 아이디"
             autoCapitalize="none"
             value={id}
             onChangeText={setId}
           />
           <TextInput
             style={styles.input}
-            placeholder="password"
+            placeholder="패스워드"
+            placeholderTextColor={'#bbb'}
             secureTextEntry
             autoCapitalize="none"
             value={password}
@@ -66,9 +69,28 @@ export default function LoginScreen() {
               Platform.OS === 'ios' && pressed && styles.submitPressed,
             ]}
             onPress={() => onPress()}>
-            <Text>로그인</Text>
+            <Text style={styles.buttonText}>로그인</Text>
           </Pressable>
-          <Text onPress={() => navigation.navigate('Register')}>회원가입</Text>
+          {/* <View style={styles.padding} /> */}
+          <View style={styles.linkWarp}>
+            <Text
+              style={styles.link}
+              onPress={() => navigation.navigate('Register')}>
+              아이디 찾기
+            </Text>
+            <Text style={styles.seperater}>|</Text>
+            <Text
+              style={styles.link}
+              onPress={() => navigation.navigate('Register')}>
+              비밀번호 재설정
+            </Text>
+            <Text style={styles.seperater}>|</Text>
+            <Text
+              style={styles.link}
+              onPress={() => navigation.navigate('Register')}>
+              회원가입
+            </Text>
+          </View>
         </View>
       </View>
     </KeyboardAvoidingView>
@@ -80,24 +102,47 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 12,
+    backgroundColor: '#fefefe',
   },
   input: {
-    borderRadius: 10,
+    borderRadius: 5,
+    borderColor: '#bbb',
     backgroundColor: '#fff',
-    padding: 10,
+    padding: 15,
     borderWidth: 1,
     marginBottom: 10,
+    fontSize: 15,
+    fontWeight: '300',
   },
   submit: {
-    backgroundColor: '#FFC107',
-    color: '#FFF',
-    fontSize: 25,
-    height: 50,
-    borderRadius: 10,
+    marginTop: 30,
+    marginBottom: 20,
+    backgroundColor: '#7e57c2',
+    padding: 15,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 100,
   },
   submitPressed: {
     opacity: 0.75,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 15,
+  },
+  padding: {
+    padding: 20,
+  },
+  linkWarp: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  link: {
+    letterSpacing: 1.5,
+  },
+  seperater: {
+    color: '#bbb',
+    marginHorizontal: 12,
   },
 });

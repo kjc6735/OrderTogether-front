@@ -49,7 +49,7 @@ export default function RootStack() {
           // console.log('route ', route.params.title);
           return {
             title: route.params.title,
-            data: route.params.data,
+            room: route.params.room.name,
             headerLeft: () => {
               return (
                 <TouchableOpacity

@@ -11,7 +11,7 @@ export const useChat = () => {
       console.log('chat success', data);
       navigation.navigate('Chat', {
         title: data.user.userId,
-        data,
+        room: data.room.name,
       });
     },
     onError: (e: AxiosError) => {

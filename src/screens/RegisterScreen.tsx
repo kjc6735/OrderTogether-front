@@ -28,13 +28,12 @@ export default function RegisterScreen() {
 
   const {mutate, isLoading, isSuccess} = useRegister();
 
-  const initialize = useCallback(() => {
-    setId('');
-    setId('');
-    setDisplayName('');
-    setAddr(null);
-    setPassword('');
-  }, []);
+  // const initialize = useCallback(() => {
+  //   setId('');
+  //   setDisplayName('');
+  //   setAddr(null);
+  //   setPassword('');
+  // }, []);
   const onSubmit = useCallback(() => {
     if (!id || !password || !addr) {
       Inform({title: '알림', message: '모든 정보를 입력해주세요..'});
@@ -52,13 +51,6 @@ export default function RegisterScreen() {
     }
   }, [addr, id, password, displayName, mutate]);
 
-  useEffect(() => {
-    isSuccess ? initialize() : '';
-  }, [isSuccess, initialize]);
-
-  useEffect(() => {
-    console.log(addr);
-  }, [addr]);
   return (
     <KeyboardAvoidingView
       style={styles.block}
@@ -111,7 +103,7 @@ export default function RegisterScreen() {
                 style={[styles.input, styles.addressInput, styles.disabled]}
                 editable={false}
                 selectTextOnFocus={false}
-                value={addr?.zonecode.toString()}
+                value={addr?.zonecode?.toString()}
               />
               <Pressable
                 style={({pressed}) => [
@@ -156,6 +148,7 @@ export default function RegisterScreen() {
 
 const styles = StyleSheet.create({
   block: {
+    backgroundColor: 'white',
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 12,
