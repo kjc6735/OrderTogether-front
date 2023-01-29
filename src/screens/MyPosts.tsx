@@ -20,7 +20,7 @@ export default function MyPostsScreen() {
   } = useQuery(['posts', 'myPosts'], getMyPosts);
 
   const {mutate, isSuccess} = useMutation(removePost, {
-    onSuccess: data => {
+    onSuccess: (data: any) => {
       console.log(data);
       Inform({
         title: '알림',

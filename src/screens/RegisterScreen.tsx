@@ -1,8 +1,8 @@
-import Postcode from '@actbase/react-daum-postcode';
+import {Button} from '@react-native-material/core';
 import {useNavigation} from '@react-navigation/native';
-import React, {useCallback, useEffect, useState} from 'react';
+
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
-  Button,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -11,182 +11,159 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import Inform from '../components/Inform';
 import {useRegister} from '../hooks/useRegister';
+import IndicatorButton from '../components/IndicatorButton';
 
 export default function RegisterScreen() {
-  const [id, setId] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [showPostcodePage, setShowPostcodePage] = useState<boolean>(false);
-  const [displayName, setDisplayName] = useState<string>('');
-  const [addr, setAddr] = useState<{
-    zonecode: number;
-    address: string;
-    addressEn: string;
-    detail?: string;
-  } | null>();
-
-  const {mutate, isLoading, isSuccess} = useRegister();
-
-  // const initialize = useCallback(() => {
-  //   setId('');
-  //   setDisplayName('');
-  //   setAddr(null);
-  //   setPassword('');
-  // }, []);
-  const onSubmit = useCallback(() => {
-    if (!id || !password || !addr) {
-      Inform({title: '알림', message: '모든 정보를 입력해주세요..'});
+  const currentRef = useRef<number>(0);
+  const refArr = useRef<TextInput[] | null[]>([]);
+  const [userId, setUserId] = useState<string>();
+  const [password, setPassword] = useState<string>();
+  const {register, checkDuplicateUserId, phoneAuthentication} = useRegister();
+  const nextRef = useCallback((e: any) => {
+    currentRef.current++;
+    console.log(refArr.current[currentRef.current]?.focus());
+    if (currentRef.current === nextRef.length) {
+      return;
     }
-    if (addr) {
-      mutate({
-        displayName,
-        userId: id,
-        password,
-        addressKo: addr.address,
-        zonecode: addr.zonecode,
-        detail: addr.detail ?? null,
-        addressEn: addr.addressEn,
-      });
-    }
-  }, [addr, id, password, displayName, mutate]);
+    refArr.current[currentRef.current]?.focus();
+  }, []);
 
   return (
-    <KeyboardAvoidingView
-      style={styles.block}
-      behavior={Platform.select({ios: 'padding'})}>
-      {showPostcodePage ? (
-        <Postcode
-          style={styles.postcode}
-          jsOptions={{animation: true}}
-          onSelected={data => {
-            const {zonecode, address, addressEnglish} = data;
-            setAddr({
-              zonecode: zonecode,
-              address,
-              addressEn: addressEnglish,
-            });
-            setShowPostcodePage(!showPostcodePage);
-          }}
-          onError={function (error: unknown): void {
-            throw new Error('Function not implemented.');
+    <KeyboardAvoidingView style={styles.block}>
+      <View style={styles.wrapper}>
+        <TextInput
+          ref={ref => (refArr.current[0] = ref)}
+          style={[styles.input, styles.flex]}
+          placeholderTextColor={'#bbb'}
+          placeholder="아이디를 입력해주세요"
+          autoCapitalize="none"
+          onSubmitEditing={nextRef}
+          onFocus={e => {
+            currentRef.current = 0;
           }}
         />
-      ) : (
-        <View style={styles.block}>
-          <View>
-            <TextInput
-              style={styles.input}
-              placeholder="id"
-              autoCapitalize="none"
-              value={id}
-              onChangeText={setId}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="닉네임"
-              autoCapitalize="none"
-              value={displayName}
-              onChangeText={setDisplayName}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="password"
-              secureTextEntry
-              value={password}
-              onChangeText={setPassword}
-            />
-
-            <View style={{flexDirection: 'row'}}>
-              <TextInput
-                placeholder="Zonecode"
-                style={[styles.input, styles.addressInput, styles.disabled]}
-                editable={false}
-                selectTextOnFocus={false}
-                value={addr?.zonecode?.toString()}
-              />
-              <Pressable
-                style={({pressed}) => [
-                  styles.submit,
-                  Platform.OS === 'ios' && pressed && styles.submitPressed,
-                  styles.addressSearchButton,
-                ]}
-                onPress={() => {
-                  setShowPostcodePage(!showPostcodePage);
-                }}>
-                <Text>검색</Text>
-              </Pressable>
-            </View>
-            <TextInput
-              style={[styles.input, styles.disabled]}
-              placeholder="주소"
-              editable={false}
-              selectTextOnFocus={false}
-              value={addr?.address}
-            />
-            <TextInput
-              style={[styles.input]}
-              placeholder="상세주소"
-              value={addr?.detail}
-              onChangeText={(text: string) => setAddr({...addr!, detail: text})}
-            />
-            <Pressable
-              style={({pressed}) => [
-                styles.submit,
-                Platform.OS === 'ios' && pressed && styles.submitPressed,
-              ]}
-              disabled={isLoading}
-              onPress={onSubmit}>
-              <Text>회원가입</Text>
-            </Pressable>
-          </View>
-        </View>
-      )}
+        <IndicatorButton title="중복확인" disabled={true} />
+      </View>
+      <View style={styles.wrapper}>
+        <TextInput
+          ref={ref => (refArr.current[1] = ref)}
+          style={[styles.input, styles.flex]}
+          placeholderTextColor={'#bbb'}
+          placeholder="비밀번호를 입력해주세요"
+          autoCapitalize="none"
+          onSubmitEditing={nextRef}
+          onFocus={e => {
+            currentRef.current = 1;
+          }}
+        />
+      </View>
+      <View style={styles.wrapper}>
+        <TextInput
+          ref={ref => (refArr.current[2] = ref)}
+          style={[styles.input, styles.flex]}
+          placeholderTextColor={'#bbb'}
+          placeholder="비밀번호 똑같이 입력해주세요"
+          autoCapitalize="none"
+          onSubmitEditing={nextRef}
+          onFocus={e => {
+            currentRef.current = 2;
+          }}
+        />
+      </View>
+      <View style={styles.wrapper}>
+        <TextInput
+          ref={ref => (refArr.current[3] = ref)}
+          style={[styles.input, styles.flex]}
+          placeholderTextColor={'#bbb'}
+          placeholder="휴대폰 번호를 입력해주세요 (숫자만)"
+          autoCapitalize="none"
+          onSubmitEditing={nextRef}
+          onFocus={e => {
+            currentRef.current = 3;
+          }}
+        />
+        <Button
+          title="인증번호 받기"
+          titleStyle={{
+            color: '#7e57c2',
+          }}
+          disabled={phoneAuthentication.isLoading}
+          style={[
+            styles.button,
+            phoneAuthentication.isLoading ? styles.loading : null,
+          ]}
+        />
+      </View>
+      <Pressable
+        style={({pressed}) => [
+          styles.submit,
+          Platform.OS === 'ios' && pressed && styles.submitPressed,
+        ]}
+        // onPress={register({
+        //   userId,
+        //   password,
+        // })}
+      >
+        <Text style={styles.buttonText}>가입하기</Text>
+      </Pressable>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   block: {
-    backgroundColor: 'white',
+    paddingTop: 20,
     flex: 1,
-    justifyContent: 'center',
     paddingHorizontal: 12,
+    backgroundColor: '#fefefe',
+  },
+  wrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    marginBottom: 15,
+    padding: 0,
+    margin: 0,
+    alignItems: 'center',
+    height: 50,
   },
   input: {
-    borderRadius: 10,
+    borderRadius: 3,
+    borderColor: '#bbb',
     backgroundColor: '#fff',
-    padding: 10,
+    padding: 15,
     borderWidth: 1,
-    marginBottom: 10,
+    fontSize: 15,
+    fontWeight: '300',
+  },
+  flex: {
+    flex: 1,
+  },
+  button: {
+    marginLeft: 10,
+    borderRadius: 3,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: '#7e57c2',
+    elevation: 0,
+    justifyContent: 'center',
+    height: '100%',
   },
   submit: {
-    backgroundColor: '#FFC107',
-    color: '#FFF',
-    fontSize: 25,
-    height: 50,
-    borderRadius: 10,
+    backgroundColor: '#7e57c2',
+    padding: 15,
     alignItems: 'center',
     justifyContent: 'center',
+    borderRadius: 3,
   },
   submitPressed: {
     opacity: 0.75,
   },
-  addressSearchButton: {
-    flex: 1,
+  buttonText: {
+    color: '#fff',
+    fontSize: 15,
   },
-  disabled: {
-    backgroundColor: '#ddd',
-  },
-  addressInput: {
-    flex: 2,
-    marginRight: 10,
-  },
-  postcode: {
-    marginTop: 10,
-    flex: 1,
-    width: '100%',
-    zIndex: 999,
-    display: 'flex',
+  loading: {
+    backgroundColor: '#bbbbbb',
   },
 });

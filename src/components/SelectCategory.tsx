@@ -1,14 +1,16 @@
 import React, {
   Dispatch,
   SetStateAction,
+  useCallback,
   useEffect,
   useLayoutEffect,
   useState,
 } from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {useQuery} from 'react-query';
-import {getAllStore, getCategory} from '../api';
+import {Category, SubCategory} from '../api/types';
+import useCategory from '../hooks/useCategory';
+import {useSubCategory} from '../hooks/useSubCategory';
 
 function SelectCategory({
   onChange,
@@ -17,27 +19,20 @@ function SelectCategory({
 }: {
   onChange: Dispatch<SetStateAction<null>>;
   value: any;
-  fixed: boolean | undefined;
+  fixed?: boolean | undefined;
 }) {
+  const {categories} = useCategory();
   const [open, setOpen] = useState(false);
   const [open2, setOpen2] = useState(false);
-  const {data: store, isLoading: storeLoading} = useQuery('store', getAllStore);
-  const {data: categories, isLoading: categoryLoading} = useQuery(
-    'category',
-    getCategory,
-  );
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [filteredStore, setFilteredStore] = useState(null);
-  const [category, setCategory] = useState();
-  useEffect(() => {
-    store &&
-      setFilteredStore(
-        store.filter((s: any) => s.categoryId === selectedCategory),
-      );
-  }, [store, selectedCategory]);
-  useLayoutEffect(() => {
-    setCategory(categories);
-  }, [categories]);
+  const [selectedCategory, setSelectedCategory] = useState();
+  const {subCategory} = useSubCategory();
+  const filtered = useCallback(() => {
+    return (
+      selectedCategory !== null &&
+      subCategory !== null &&
+      subCategory?.filter(d => d.categoryId === selectedCategory)
+    );
+  }, [selectedCategory, subCategory]);
   return (
     <View
       style={[
@@ -45,7 +40,7 @@ function SelectCategory({
         fixed && styles.fixed,
         fixed && Platform.OS === 'ios' && styles.ios,
       ]}>
-      {category && (
+      {categories.data && (
         <DropDownPicker
           open={open}
           schema={{
@@ -53,7 +48,7 @@ function SelectCategory({
             value: 'id',
           }}
           value={selectedCategory}
-          items={category!}
+          items={categories.data!}
           setOpen={setOpen}
           setValue={setSelectedCategory}
           zIndex={900}
@@ -63,7 +58,7 @@ function SelectCategory({
           }}
         />
       )}
-      {filteredStore && (
+      {subCategory && selectedCategory && (
         <DropDownPicker
           schema={{
             label: 'name',
@@ -71,7 +66,7 @@ function SelectCategory({
           }}
           open={open2}
           value={value}
-          items={filteredStore}
+          items={filtered()}
           setOpen={setOpen2}
           zIndex={400}
           setValue={onChange}

@@ -15,15 +15,13 @@ function App() {
   return (
     // <MyMap />
     <UserContextProvider>
-      <LocationContextProvider>
-        <SocketContextProvider>
-          <QueryClientProvider client={queryClient}>
-            <NavigationContainer>
-              <InApp />
-            </NavigationContainer>
-          </QueryClientProvider>
-        </SocketContextProvider>
-      </LocationContextProvider>
+      <SocketContextProvider>
+        <QueryClientProvider client={queryClient}>
+          <NavigationContainer>
+            <InApp />
+          </NavigationContainer>
+        </QueryClientProvider>
+      </SocketContextProvider>
     </UserContextProvider>
   );
 }

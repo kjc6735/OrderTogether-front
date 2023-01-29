@@ -1,12 +1,23 @@
 import {useNavigation} from '@react-navigation/native';
 import {AxiosError} from 'axios';
-import {useMutation} from 'react-query';
-import {createPost} from '../api';
+import {useCallback} from 'react';
+import {useMutation, useQuery} from 'react-query';
+import {createPost, getPostsByStoreId} from '../api';
 import Inform from '../components/Inform';
 
-export const usePost = () => {
+export const usePost = (id: number | null) => {
   const navigation = useNavigation();
-  return useMutation(createPost, {
+
+  const posts = useQuery(
+    ['posts', {subCategoryId: id}],
+    () => (id !== null ? getPostsByStoreId({id}) : null),
+    {
+      enabled: id !== null,
+    },
+  );
+  // const posts = id ? useQuery(['posts', {subCategoryId: id}]) : null;
+
+  const create = useMutation(createPost, {
     onSuccess: data => {
       Inform({
         title: '알림',
@@ -26,4 +37,9 @@ export const usePost = () => {
       Inform({title: '에러', message: error.message});
     },
   });
+
+  return {
+    posts: posts.data,
+    create,
+  };
 };

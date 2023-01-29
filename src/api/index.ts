@@ -1,3 +1,4 @@
+import {Category, SubCategory} from './types';
 import axios from 'axios';
 import {Platform} from 'react-native';
 
@@ -18,7 +19,27 @@ export const setToken = (token: string | null) => {
   }
 };
 
-export const login = async ({id, password}: {id: string; password: string}) => {
+export const checkDuplicateUserId = async ({
+  userId,
+}: {
+  userId: string;
+}): Promise<boolean> => {
+  const {data} = await client.post('/users/check', {userId});
+  return data;
+};
+
+export const phoneAuthentication = async ({phone}: {phone: string}) => {
+  const {data} = await client.post('/users/check', {phone});
+  return data;
+};
+
+export const login = async ({
+  id,
+  password,
+}: {
+  id: string;
+  password: string;
+}): Promise<any> => {
   const {data} = await client.post('/users/login', {userId: id, password});
   return data;
 };
@@ -52,7 +73,7 @@ export const register = async ({
   return data;
 };
 
-export const getCategory = async () => {
+export const getCategory = async (): Promise<Category[]> => {
   const {data} = await client.get('/categories');
   return data;
 };
@@ -72,6 +93,15 @@ export const getPosts = async (category: string): Promise<any> => {
   return data;
 };
 
+export const getPostsByCategoryId = async ({
+  id,
+}: {
+  id: number;
+}): Promise<any> => {
+  const {data} = await client.get(`/category/${id}/posts`);
+  return data;
+};
+
 export const getAllPosts = async () => {
   // console.log('token is ', client.defaults.headers.common.token);
   const {data} = await client.get('/posts');
@@ -83,7 +113,7 @@ export const getMyPosts = async () => {
   return data;
 };
 
-export const getAllStore = async () => {
+export const getAllStore = async (): Promise<SubCategory[]> => {
   const {data} = await client.get('/stores');
   return data;
 };
@@ -100,10 +130,9 @@ export const getChatList = async () => {
 //   });
 // };
 
-export const getPostsByStoreId = async (id: string) => {
+export const getPostsByStoreId = async ({id}: {id: number}) => {
   const {data} = await client.get(`/stores/${id}/posts`);
-
-  console.log('GET_POST id: ', id, data);
+  // console.log('GET_POST id: ', id, data);
   return data;
 };
 export const createPost = async ({

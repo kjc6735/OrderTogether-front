@@ -1,9 +1,13 @@
 import {useMutation} from 'react-query';
-import {register} from '../api';
+import {
+  checkDuplicateUserId as checkDuplicateUserIdApi,
+  register as registerApi,
+  phoneAuthentication as phoneAuthenticationApi,
+} from '../api';
 import Inform from '../components/Inform';
 
 export const useRegister = () => {
-  return useMutation(register, {
+  const register = useMutation(registerApi, {
     onSuccess: data => {
       Inform({title: '회원가입 성공', message: data.message});
     },
@@ -12,4 +16,25 @@ export const useRegister = () => {
       Inform({title: '회원가입 실패', message: error.message});
     },
   });
+  const checkDuplicateUserId = useMutation(checkDuplicateUserIdApi, {
+    onSuccess: async data => {
+      return !!data;
+    },
+    onError: error => {
+      console.log(error);
+    },
+  });
+  const phoneAuthentication = useMutation(phoneAuthenticationApi, {
+    onSuccess: async data => {
+      return !!data;
+    },
+    onError: error => {
+      console.log(error);
+    },
+  });
+  return {
+    register,
+    checkDuplicateUserId,
+    phoneAuthentication,
+  };
 };

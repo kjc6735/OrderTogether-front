@@ -1,3 +1,4 @@
+import {ActivityIndicator} from '@react-native-material/core';
 import {useNavigation} from '@react-navigation/native';
 import React, {useCallback, useEffect, useState} from 'react';
 import {
@@ -9,6 +10,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import IndicatorButton from '../components/IndicatorButton';
 import Inform from '../components/Inform';
 import {useUserState} from '../contexts/UserContext';
 import useLoginEffect from '../effects/useLoginEffect';
@@ -20,7 +22,7 @@ export default function LoginScreen() {
   const navigation = useNavigation<RootStackNavigationProp>();
   const [id, setId] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const {mutate, isSuccess} = useLogin();
+  const {mutate, isSuccess, isLoading} = useLogin();
   const onPress = useCallback(async () => {
     if (!id || !password) {
       return;
@@ -64,13 +66,19 @@ export default function LoginScreen() {
             onChangeText={setPassword}
           />
           <Pressable
+            disabled={isLoading}
             style={({pressed}) => [
               styles.submit,
               Platform.OS === 'ios' && pressed && styles.submitPressed,
             ]}
             onPress={() => onPress()}>
-            <Text style={styles.buttonText}>로그인</Text>
+            {isLoading ? (
+              <ActivityIndicator />
+            ) : (
+              <Text style={styles.buttonText}>로그인</Text>
+            )}
           </Pressable>
+          {/* <IndicatorButton title="로그인" /> */}
           {/* <View style={styles.padding} /> */}
           <View style={styles.linkWarp}>
             <Text
@@ -121,7 +129,7 @@ const styles = StyleSheet.create({
     padding: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 100,
+    borderRadius: 3,
   },
   submitPressed: {
     opacity: 0.75,

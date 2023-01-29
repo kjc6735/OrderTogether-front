@@ -25,11 +25,19 @@ export default function RootStack() {
         name="Login"
         component={LoginScreen}
         options={{
-          gestureEnabled: false,
+          // headerTitle: '',
+          headerShadowVisible: false,
           headerShown: false,
         }}
       />
-      <Stack.Screen name="Register" component={RegisterScreen} />
+      <Stack.Screen
+        name="Register"
+        component={RegisterScreen}
+        options={{
+          headerTitle: '회원가입',
+          headerShadowVisible: false,
+        }}
+      />
       <Stack.Screen
         name="Write"
         component={WriteScreen}
